@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { EB_Garamond, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,18 +12,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const ebGaramond = EB_Garamond({
+  variable: "--font-eb-garamond",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Kaush Rajesh",
-  description: "Kaush Rajesh",
+  description:
+    "Kaush Rajesh studies brain & cognitive science at UIUC and leads product design at Vinskal.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${ebGaramond.variable} h-full bg-background antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

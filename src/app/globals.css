@@ -2,25 +2,112 @@
 
 :root {
   --background: #000000;
+  --surface-1: #08090a;
+  --surface-2: #0e1012;
   --foreground: #ededed;
+  --muted: #888888;
+  --faint: #444444;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-eb-garamond);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  scrollbar-color: #1f2023 var(--background);
+  scrollbar-width: thin;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: rgb(255 255 255 / 0.9);
+  color: #000000;
+}
+
+/* Safari ignores scrollbar-color; these rules cover it. */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #1f2023;
+  border: 3px solid var(--background);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2e3034;
+}
+
+/* Shown while the WebGL scene loads, and kept if it never does. */
+.hero-fallback {
+  background:
+    radial-gradient(60% 40% at 50% 38%, rgb(255 255 255 / 0.14), transparent 70%),
+    radial-gradient(35% 25% at 30% 45%, rgb(255 255 255 / 0.06), transparent 70%),
+    radial-gradient(35% 25% at 70% 42%, rgb(255 255 255 / 0.06), transparent 70%),
+    var(--background);
+  animation: ambient-pulse 6s ease-in-out infinite;
+}
+
+@keyframes ambient-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  50.1% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+.scroll-cue {
+  animation: scroll-cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fallback,
+  .scroll-cue {
+    animation: none;
+  }
 }
