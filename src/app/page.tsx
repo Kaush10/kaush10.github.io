@@ -1,3 +1,4 @@
+import { HeroOverlay } from "@/components/HeroOverlay";
 import { IndustrialGlyph, UiucGlyph, VinskalGlyph, YonseiGlyph } from "@/components/glyphs";
 import { MorphLink } from "@/components/MorphLink";
 import { SpatialTimeline } from "@/components/SpatialTimeline";
@@ -22,17 +23,7 @@ export default function Home() {
           className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-black"
         />
 
-        <h1 className="pointer-events-none absolute inset-x-0 top-[72%] -translate-y-1/2 px-6 text-center font-serif text-[clamp(3rem,8vw,6.5rem)] leading-none tracking-[-0.01em] text-foreground [text-shadow:0_0_48px_rgb(255_255_255/0.28)]">
-          {HEADLINE}
-        </h1>
-
-        <a
-          href="#about"
-          className="absolute bottom-6 flex min-h-11 min-w-11 flex-col items-center gap-2 px-3 py-2 font-mono text-[11px] tracking-widest text-white/30 uppercase transition-colors hover:text-white/60 focus-visible:outline-1 focus-visible:outline-white/40"
-        >
-          scroll
-          <span aria-hidden className="scroll-cue block h-8 w-px bg-white/40" />
-        </a>
+        <HeroOverlay headline={HEADLINE} />
       </section>
 
       <section
@@ -44,7 +35,7 @@ export default function Home() {
             LAST UPDATED: SEPTEMBER 2026 // CHAMPAIGN, IL
           </p>
 
-          <div className="mt-10 space-y-6 text-lg leading-[1.75] text-muted">
+          <div className="mt-10 space-y-7 font-serif text-[clamp(1.4rem,2.4vw,1.75rem)] leading-[1.5] text-white/55">
             <p>
               im a senior studying brain & cognitive science with cs & informatics at{" "}
               <MorphLink href="https://illinois.edu" glyph={<UiucGlyph />}>

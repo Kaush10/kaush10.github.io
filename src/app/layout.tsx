@@ -34,7 +34,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${ebGaramond.variable} h-full bg-background antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+        <div aria-hidden className="grain pointer-events-none fixed inset-0 z-50" />
+      </body>
     </html>
   );
 }
