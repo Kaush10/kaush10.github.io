@@ -397,6 +397,65 @@ body {
   inset: var(--d);
 }
 
+/* Edges: the recess's shape, barely there. Blurred a touch so nothing reads
+   as a crisp line, brighter where the light reaches (lower down), and the
+   seams fade out before they reach the frame's corners. */
+.recess-edges {
+  position: absolute;
+  inset: 0;
+  filter: blur(1.2px);
+  opacity: 0.45;
+  transition: opacity 0.5s ease;
+}
+.spot[data-lit] .recess-edges {
+  opacity: 1;
+  transition: opacity 2s ease 0.6s;
+}
+.recess-outline {
+  position: absolute;
+  inset: var(--d);
+  border: 1.5px solid;
+  border-color: rgb(255 255 255 / 0.03) rgb(255 255 255 / 0.05) rgb(255 255 255 / 0.075);
+  mask-image: radial-gradient(ellipse 75% 85% at 50% 55%, #000 35%, rgb(0 0 0 / 0.3) 100%);
+}
+.recess-seam {
+  position: absolute;
+  width: calc(var(--d) * 1.4142);
+  height: 1.5px;
+}
+.recess-seam-tl,
+.recess-seam-tr {
+  top: 0;
+}
+.recess-seam-bl,
+.recess-seam-br {
+  bottom: 0;
+}
+.recess-seam-tl {
+  left: 0;
+  transform-origin: 0 50%;
+  transform: rotate(45deg);
+  background: linear-gradient(to right, transparent 15%, rgb(255 255 255 / 0.035));
+}
+.recess-seam-tr {
+  right: 0;
+  transform-origin: 100% 50%;
+  transform: rotate(-45deg);
+  background: linear-gradient(to left, transparent 15%, rgb(255 255 255 / 0.035));
+}
+.recess-seam-bl {
+  left: 0;
+  transform-origin: 0 50%;
+  transform: rotate(-45deg);
+  background: linear-gradient(to right, transparent 15%, rgb(255 255 255 / 0.065));
+}
+.recess-seam-br {
+  right: 0;
+  transform-origin: 100% 50%;
+  transform: rotate(45deg);
+  background: linear-gradient(to left, transparent 15%, rgb(255 255 255 / 0.065));
+}
+
 /* ---- Niche variant (board): a wall-washer instead of a beam ------------
  * The lamp on the rim grazes the back wall, so the light is a scallop: a
  * bright spot right under the lamp spreading down and out, with no cone in

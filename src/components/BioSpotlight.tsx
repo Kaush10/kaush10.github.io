@@ -135,6 +135,15 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
           <div className="recess-wall recess-right" />
           <div className="recess-wall recess-floor" />
         </div>
+        {/* Faint, softened hints of the recess's shape: the panel's outline and
+            the seams where the walls meet, fading out toward the frame. */}
+        <div className="recess-edges">
+          <div className="recess-outline" />
+          <span className="recess-seam recess-seam-tl" />
+          <span className="recess-seam recess-seam-tr" />
+          <span className="recess-seam recess-seam-bl" />
+          <span className="recess-seam recess-seam-br" />
+        </div>
         <div className="recess-panel">
           <div className="spot-wash" />
           <div className="spot-scallop" />
