@@ -5,12 +5,34 @@ import { useEffect, useRef, useState } from "react";
 const SDK_URL =
   "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.3.0/dist/unicornStudio.umd.js";
 
-type Layer = { hide: () => void };
+type Layer = {
+  hide: () => void;
+  layerType?: string;
+  fontSize?: number;
+  breakpoints?: { name: string; props: Record<string, unknown> }[];
+};
 
 type Scene = {
   destroy: () => void;
   getLayer: (idOrName: string) => Layer | undefined;
+  layers?: Layer[];
 };
+
+// The scene's headline is set small for phones (its "Mobile" breakpoint). It
+// reads better about twice that size, on two lines. Font size is relative to
+// the canvas width. Set on the layer and on its Mobile breakpoint, so it holds
+// when the scene re-applies breakpoints on resize.
+const MOBILE_HEADLINE_SIZE = 0.1;
+
+function enlargeMobileHeadline(scene: Scene) {
+  for (const layer of scene.layers ?? []) {
+    if (layer.layerType !== "text") continue;
+    const mobile = layer.breakpoints?.find((b) => b.name === "Mobile");
+    if (!mobile) continue;
+    mobile.props.fontSize = MOBILE_HEADLINE_SIZE;
+    if (window.matchMedia("(max-width: 575px)").matches) layer.fontSize = MOBILE_HEADLINE_SIZE;
+  }
+}
 
 type UnicornStudioSDK = {
   addScene: (options: {
@@ -95,6 +117,11 @@ export function UnicornHero({
           return;
         }
         scene = created;
+        try {
+          enlargeMobileHeadline(created);
+        } catch {
+          // The SDK's internals changed; keep the scene's own size.
+        }
         for (const name of hiddenKey ? hiddenKey.split("\n") : []) {
           created.getLayer(name)?.hide();
         }
