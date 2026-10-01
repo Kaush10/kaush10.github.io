@@ -11,8 +11,8 @@ import * as THREE from "three";
 //
 // Units: the ground is y = 0, the sheet is US letter, 1 unit wide.
 
-const PAPER_W = 1;
-const PAPER_H = 11 / 8.5;
+const PAPER_W = 1.2;
+const PAPER_H = 1.2 * (11 / 8.5);
 // The sheet lies turned a quarter, long side toward the viewer: its length
 // runs side to side (the axis it swings and rocks along), its width front to back.
 const HALF_SIDE = PAPER_H / 2;
@@ -20,8 +20,8 @@ const HALF_DEPTH = PAPER_W / 2;
 const SEG_X = 28;
 const SEG_Y = 36;
 
-const FALL = 3.3; // s from release to touchdown
-const SETTLE = 0.9; // s for the sheet to lie flat after touchdown
+export const FALL = 2.3; // s from release to touchdown
+const SETTLE = 0.6; // s for the sheet to lie flat after touchdown
 export const DURATION = FALL + SETTLE;
 
 const START_HEIGHT = 2.7;
@@ -192,8 +192,9 @@ function paperTexture(anisotropy: number) {
     c.stroke();
   }
   const edge = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.hypot(W, H) * 0.55);
-  edge.addColorStop(0, "rgb(0 0 0 / 0)");
-  edge.addColorStop(1, "rgb(40 36 30 / 0.28)");
+  // Edges a shade lighter, like a drawn sheet catching the light, not a rendered one.
+  edge.addColorStop(0, "rgb(255 255 255 / 0)");
+  edge.addColorStop(1, "rgb(245 242 236 / 0.3)");
   c.fillStyle = edge;
   c.fillRect(0, 0, W, H);
 
@@ -258,6 +259,11 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
     metalness: 0,
     side: THREE.DoubleSide,
     transparent: true,
+    // Part of its colour is unlit, which flattens the shading toward an
+    // illustration: the bends still read, without a rendered falloff.
+    emissive: "#ffffff",
+    emissiveMap: texture,
+    emissiveIntensity: 0.38,
   });
   const sheet = new THREE.Mesh(geometry, material);
   sheet.castShadow = true;

@@ -14,10 +14,18 @@ import { timelineLit } from "@/components/timeline-light";
 // The lamp, beam, pool and dust are CSS; the sheet and its shadow are
 // three.js (paper-fall.ts), which only loads as the section comes near.
 
-const LIGHT_LEAD = 1.1; // s from the lamp catching to the sheet appearing
+const LIGHT_LEAD = 0.1; // s from the lamp catching to the sheet's release
+const POOL_WIDEN = 1.5; // the pool reaches wider across the ground than the 3D light's cone
+const UNLOCK_AFTER = 0.08; // s after touchdown that [resume] opens
 const BLUR_MAX = 10; // px, how soft the sheet is before it enters the light
 
 type Rect = { x: number; y: number; w: number; h: number };
+
+const widen = (r: Rect): Rect => ({
+  ...r,
+  x: r.x - (r.w * (POOL_WIDEN - 1)) / 2,
+  w: r.w * POOL_WIDEN,
+});
 
 // Dust in the beam, mostly low down where the light is strongest on the air.
 const MOTES = Array.from({ length: 9 }, (_, i) => {
@@ -53,6 +61,7 @@ export function ResumeDrop({ href }: { href: string }) {
 
     let scene: PaperScene | null = null;
     let duration = 0;
+    let touchdown = 0;
     let raf = 0;
     let started = false;
     let disposed = false;
@@ -61,7 +70,8 @@ export function ResumeDrop({ href }: { href: string }) {
       if (disposed) return null;
       scene = m.createPaperScene(canvas);
       duration = m.DURATION;
-      setPool(scene.pool());
+      touchdown = m.FALL;
+      setPool(widen(scene.pool()));
       scene.render(0);
       return scene;
     });
@@ -86,11 +96,9 @@ export function ResumeDrop({ href }: { href: string }) {
           pose.blur > 0.01
             ? `blur(${(pose.blur * BLUR_MAX).toFixed(2)}px)`
             : "";
+        if (t >= touchdown + UNLOCK_AFTER) setLanded(true);
         if (t < duration) raf = requestAnimationFrame(tick);
-        else {
-          raf = 0;
-          setLanded(true);
-        }
+        else raf = 0;
       };
       raf = requestAnimationFrame(tick);
     };
@@ -112,7 +120,7 @@ export function ResumeDrop({ href }: { href: string }) {
     const resize = new ResizeObserver(() => {
       if (!scene) return;
       scene.resize();
-      setPool(scene.pool());
+      setPool(widen(scene.pool()));
       if (!raf) scene.render(started ? duration : 0);
     });
     resize.observe(stage);
@@ -141,7 +149,7 @@ export function ResumeDrop({ href }: { href: string }) {
           <div
             aria-hidden
             className="resume-beam pointer-events-none absolute top-0"
-            style={{ left: apex, width: pool.w * 1.02, height: beamHeight }}
+            style={{ left: apex, width: pool.w * 0.9, height: beamHeight }}
           />
           <div
             aria-hidden
