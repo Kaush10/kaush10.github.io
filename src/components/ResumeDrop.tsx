@@ -23,6 +23,12 @@ const BLUR_MAX = 10; // px, how soft the sheet is before it enters the light
 
 type Rect = { x: number; y: number; w: number; h: number };
 
+/** The canvas can sit above the stage's top (on phones); move a canvas rect into stage coordinates. */
+const inStage = (r: Rect, canvas: HTMLCanvasElement): Rect => ({
+  ...r,
+  y: r.y + canvas.offsetTop,
+});
+
 const widen = (r: Rect): Rect => ({
   ...r,
   x: r.x - (r.w * (POOL_WIDEN - 1)) / 2,
@@ -73,7 +79,7 @@ export function ResumeDrop({ href }: { href: string }) {
       scene = m.createPaperScene(canvas);
       duration = m.DURATION;
       touchdown = m.FALL;
-      setPool(widen(scene.pool()));
+      setPool(widen(inStage(scene.pool(), canvas)));
       scene.render(0);
       return scene;
     });
@@ -122,7 +128,7 @@ export function ResumeDrop({ href }: { href: string }) {
     const resize = new ResizeObserver(() => {
       if (!scene) return;
       scene.resize();
-      setPool(widen(scene.pool()));
+      setPool(widen(inStage(scene.pool(), canvas)));
       if (!raf) scene.render(started ? duration : 0);
     });
     resize.observe(stage);
@@ -197,10 +203,14 @@ export function ResumeDrop({ href }: { href: string }) {
           </div>
         </>
       )}
+      {/* On phones the stage is short, so the ground sits close under the
+          timeline, but the canvas keeps the full height (and so the sheet its
+          size): it extends up past the lamp, and fades out above it so the
+          sheet only appears once it's in the light. */}
       <canvas
         ref={canvasRef}
         aria-hidden
-        className="pointer-events-none absolute inset-0 size-full"
+        className="resume-canvas pointer-events-none absolute inset-x-0 top-[-22svh] h-[56svh] w-full min-h-[24rem] md:top-0 md:h-full"
       />
       {/* The lamp: the end of the timeline's spine (at the left on phones,
           the centre on desktop). */}
