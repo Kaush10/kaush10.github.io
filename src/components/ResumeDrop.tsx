@@ -18,7 +18,7 @@ const LIGHT_LEAD = 0.1; // s from the lamp catching to the sheet's release
 const POOL_WIDEN = 1.5; // the pool reaches wider across the ground than the 3D light's cone
 // [resume] starts opening this long before touchdown, so the scroll is
 // already unrolling as the sheet lands.
-const UNLOCK_BEFORE = 0.35; // s
+const UNLOCK_BEFORE = 0.8; // s
 const BLUR_MAX = 10; // px, how soft the sheet is before it enters the light
 
 type Rect = { x: number; y: number; w: number; h: number };
@@ -143,7 +143,7 @@ export function ResumeDrop({ href }: { href: string }) {
   return (
     <div
       ref={stageRef}
-      className={`resume-drop relative h-[56svh] min-h-[24rem] w-full ${lit ? "is-lit" : ""}`}
+      className={`resume-drop relative h-[34svh] min-h-[16rem] w-full md:h-[56svh] md:min-h-[24rem] ${lit ? "is-lit" : ""}`}
     >
       {pool && (
         <>
