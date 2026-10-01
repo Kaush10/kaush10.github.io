@@ -69,11 +69,14 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // This page runs from its own header rule (--frame-top down) to the next
+  // section's (--frame-top into it), so its middle sits --frame-top below the
+  // section's. The extra top padding moves the content's centre there.
   return (
     <section
       ref={sectionRef}
       id="about"
-      className="spot relative flex min-h-[100dvh] scroll-mt-0 flex-col items-center justify-center px-10 py-32 md:px-6"
+      className="spot relative flex min-h-[100dvh] scroll-mt-0 flex-col items-center justify-center px-10 pt-[calc(8rem+2*var(--frame-top))] pb-32 md:px-6"
     >
       {/* The light: a soft cone hanging from the lamp, and the wash where it lands. */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
