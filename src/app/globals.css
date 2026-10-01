@@ -400,3 +400,53 @@ body {
 .entry-dim {
   opacity: calc(0.16 + 0.84 * var(--lit, 0));
 }
+
+/* ---- Résumé drop: the spotlight at the end of the page ----------------
+ * The beam and pool come up when .is-lit is set; the sheet (three.js) falls
+ * through them. Opacity and transform only. */
+.resume-beam {
+  transform: translateX(-50%);
+  filter: blur(26px);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.resume-beam::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.012),
+    rgb(255 255 255 / 0.05) 30%,
+    rgb(255 255 255 / 0.035) 80%,
+    rgb(255 255 255 / 0.015)
+  );
+}
+.resume-drop.is-lit .resume-beam {
+  opacity: 1;
+  transition: opacity 1.4s ease;
+}
+.resume-pool {
+  /* A spotlight's pool: evenly lit across most of it, with a soft rim. */
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 0.15),
+    rgb(255 255 255 / 0.12) 50%,
+    rgb(255 255 255 / 0.07) 75%,
+    rgb(255 255 255 / 0.02) 92%,
+    transparent
+  );
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.resume-drop.is-lit .resume-pool {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 1.2s ease 0.15s,
+    transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s;
+}

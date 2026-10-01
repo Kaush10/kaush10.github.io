@@ -9,6 +9,7 @@ import {
 } from "@/components/glyphs";
 import { MorphLink } from "@/components/MorphLink";
 import { FrameDot, FrameRails, FrameRule } from "@/components/PageFrame";
+import { ResumeDrop } from "@/components/ResumeDrop";
 import { SpatialTimeline } from "@/components/SpatialTimeline";
 import { UnicornHero } from "@/components/UnicornHero";
 
@@ -22,11 +23,18 @@ const HERO_SCENE_VERSION = "20261001-0409";
 // TODO(kaush): swap in your Steam profile link.
 const STEAM_URL = "https://store.steampowered.com";
 
+// TODO(kaush): confirm which email goes on the public site, your X handle,
+// and where the résumé lives.
+const EMAIL = "";
+const X_URL = "";
+const RESUME_URL = "#";
+
 const links = [
-  { label: "vinskal", href: "https://vinskal.com" },
-  { label: "github", href: "https://github.com/Kaush10" },
+  { label: "email", href: EMAIL ? `mailto:${EMAIL}` : "" },
   { label: "linkedin", href: "https://www.linkedin.com/in/kaushrajesh" },
-];
+  { label: "github", href: "https://github.com/Kaush10" },
+  { label: "x", href: X_URL },
+].filter((link) => link.href);
 
 export default function Home() {
   return (
@@ -90,8 +98,8 @@ export default function Home() {
               <li key={link.label}>
                 <a
                   href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noreferrer" : undefined}
                   className="inline-flex min-h-11 items-center rounded-full border border-white/[0.08] bg-white/[0.02] px-2.5 py-1 font-mono text-[11px] text-white/70 transition-all hover:border-white/30 hover:bg-white/[0.05] hover:text-white focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-white/60 active:scale-[0.98] md:min-h-0"
                 >
                   [{link.label}]
@@ -107,6 +115,7 @@ export default function Home() {
           <FrameDot variant="ring" />
         </FrameRule>
         <SpatialTimeline />
+        <ResumeDrop href={RESUME_URL} />
       </div>
 
       {/* The frame closes here, with a dim dot answering the hero's. */}

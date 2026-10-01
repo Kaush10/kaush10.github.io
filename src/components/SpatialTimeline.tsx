@@ -71,17 +71,17 @@ const entries: Entry[] = [
     roles: [
       {
         period: "2025",
-        title: "IT Intern (Enterprise UX)",
-        org: "HOERBIGER",
-        summary:
-          "Fleet-wide migration design systems and automated power workflows.",
-      },
-      {
-        period: "2025",
         title: "UX Development Intern",
         org: "MetalTek International",
         summary:
           "Corporate intranet information architecture and internal discovery search.",
+      },
+      {
+        period: "2025",
+        title: "IT Intern (Enterprise UX)",
+        org: "HOERBIGER",
+        summary:
+          "Fleet-wide migration design systems and automated power workflows.",
       },
       {
         period: "2024",
