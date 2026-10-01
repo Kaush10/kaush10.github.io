@@ -65,8 +65,8 @@ export default function Home() {
             . im currently designing and building{" "}
             <MorphLink href="https://vinskal.com" glyph={<VinskalGlyph />}>
               vinskal
-            </MorphLink>
-            , an incredible job search homebase software.
+            </MorphLink>{" "}
+            to fix the job search.
           </p>
           <p>
             previously, i’ve explored multimodal interaction models and human-ai
@@ -82,7 +82,7 @@ export default function Home() {
           </p>
           <p>
             outside of screens & design, my time’s spent climbing, hardware
-            tinkering, and late nights clearing out my{" "}
+            tinkering, and late nights chipping away at my{" "}
             <MorphLink href={STEAM_URL} glyph={<SteamGlyph />}>
               steam
             </MorphLink>{" "}
