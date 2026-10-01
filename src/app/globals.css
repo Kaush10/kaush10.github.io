@@ -238,10 +238,10 @@ body {
     radial-gradient(ellipse 22% 100% at 50% 0%, rgb(255 255 255 / 0.09), transparent 75%),
     linear-gradient(
       to bottom,
-      rgb(255 255 255 / 0.13),
-      rgb(255 255 255 / 0.05) 45%,
-      rgb(255 255 255 / 0.012) 85%,
-      transparent
+      rgb(255 255 255 / 0.12),
+      rgb(255 255 255 / 0.05) 25%,
+      rgb(255 255 255 / 0.014) 45%,
+      transparent 70%
     );
 }
 
@@ -565,7 +565,7 @@ body {
   }
   .spot-wash {
     background: radial-gradient(
-      ellipse 95% 60% at 50% 38%,
+      ellipse 50% 60% at 50% 38%,
       rgb(255 255 255 / 0.04),
       rgb(255 255 255 / 0.018) 60%,
       transparent 100%

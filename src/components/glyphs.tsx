@@ -143,13 +143,25 @@ export function IndustrialGlyph() {
   );
 }
 
-/** Stevenson's collegiate block S, with its banner of three stars across the middle. */
+/** A five-point star centred on (cx, cy), `r` from centre to point. */
+function star(cx: number, cy: number, r: number) {
+  const points = Array.from({ length: 10 }, (_, i) => {
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    const d = i % 2 ? r * 0.45 : r;
+    return `${(cx + d * Math.cos(a)).toFixed(2)} ${(cy + d * Math.sin(a)).toFixed(2)}`;
+  });
+  return `M${points.join("L")}Z`;
+}
+
+/**
+ * Stevenson's collegiate block S, with its banner of three stars across the
+ * middle bar. The banner stays on the middle bar, so the S's two openings
+ * (top right, bottom left) still show and it never reads as an 8.
+ */
 export function StevensonGlyph() {
   const id = useId();
-  const banner =
-    "M0.6 12.6C5 11 8.6 14.6 12 13.6S19 10.6 23.4 11.6V16.6C19 15.6 15.4 18.4 12 18.6S5 16 0.6 17.6Z";
-  const stars =
-    "M6 14.5l.5 1.15 1.25.1-.95.82.3 1.22-1.1-.66-1.08.66.29-1.22-.95-.82 1.25-.1zM12 14.7l.5 1.15 1.25.1-.95.82.3 1.22-1.1-.66-1.08.66.29-1.22-.95-.82 1.25-.1zM18 13.3l.5 1.15 1.25.1-.95.82.3 1.22-1.1-.66-1.08.66.29-1.22-.95-.82 1.25-.1z";
+  const banner = "M0.4 12.7C5 11.7 8.5 13.9 12 13.3S19 11.5 23.6 12.3V15.5C19 14.7 15.5 16.3 12 16.2S5 14.7 0.4 15.7Z";
+  const stars = [star(6.1, 14.1, 1.25), star(12, 14.7, 1.25), star(17.9, 13.5, 1.25)].join("");
   return (
     <Mark viewBox="0 0 24 28" label="Adlai E. Stevenson High School">
       <mask id={id}>
@@ -157,12 +169,12 @@ export function StevensonGlyph() {
         {/* the stars are holes, through the banner and the S behind it */}
         <path d={stars} fill="#000" />
       </mask>
+      <mask id={`${id}-s`}>
+        <rect width="24" height="28" fill="#fff" />
+        <path d={banner} fill="#000" />
+      </mask>
       <g mask={`url(#${id})`}>
         {/* the S, with the banner's band taken out of it */}
-        <mask id={`${id}-s`}>
-          <rect width="24" height="28" fill="#fff" />
-          <path d={banner} fill="#000" />
-        </mask>
         <path
           mask={`url(#${id}-s)`}
           d="M5.5 0.5H18.5L21 3V9H16V5.5H8V11.5H18.5L21 14V25L18.5 27.5H5.5L3 25V19H8V22.5H16V16.5H5.5L3 14V3Z"
@@ -173,54 +185,68 @@ export function StevensonGlyph() {
   );
 }
 
-/** R&R Custom Homes: a hip roof with a gabled dormer over "R&R", on a double rule. */
+/**
+ * R&R Custom Homes, traced from the logo: a hip roof narrower than the
+ * name, a gabled dormer with an arched window standing in it, and "R&R"
+ * set large under the eave on a double rule. Wider than it is tall.
+ */
 export function RRGlyph() {
   const id = useId();
   return (
-    <Mark viewBox="0 0 44 30" label="R&R Custom Homes">
+    <Mark viewBox="0 0 54 40.5" label="R&R Custom Homes">
       <mask id={id}>
-        <path fill="#fff" d="M1.5 11.4 10 4.8H34L42.5 11.4Z" />
+        <path fill="#fff" d="M3.6 12 15.8 3.2H38.7L53 12.2Z" />
         {/* the dormer's face, open in the roof */}
-        <path fill="#000" d="M18.2 11.4V6.2L22 3 25.8 6.2V11.4Z" />
+        <path fill="#000" d="M21.4 12.6V6.6L27.5 1.6 33.6 6.6V12.6Z" />
       </mask>
-      <rect width="44" height="12" mask={`url(#${id})`} />
-      {/* the dormer's gable, and its arched window */}
-      <path fill="none" stroke="currentColor" strokeWidth="1.5" d="M16.3 7 22 1.6 27.7 7" />
-      <path d="M21 10.4V8.1A1 1 0 0 1 23 8.1V10.4Z" />
+      <rect width="54" height="13" mask={`url(#${id})`} />
+      {/* the dormer: its gable, the frame down its sides, and the arched window */}
+      <path fill="none" stroke="currentColor" strokeWidth="1.6" d="M19.8 7.6 27.5 1 35.2 7.6" />
+      <path fill="none" stroke="currentColor" strokeWidth="0.7" d="M23 12.6V7.2L27.5 3.6 32 7.2V12.6" />
+      <path d="M25.8 11.2V8.7A1.7 1.7 0 0 1 29.2 8.7V11.2Z" />
       <text
-        x="22"
-        y="25.6"
+        x="27"
+        y="36.9"
         textAnchor="middle"
         fontFamily="Georgia, 'Times New Roman', serif"
         fontWeight={700}
-        fontSize="16"
-        textLength="38"
+        fontSize="34.5"
+        textLength="54"
         lengthAdjust="spacingAndGlyphs"
       >
         R&amp;R
       </text>
-      <rect x="1.5" y="27" width="41" height="1.4" />
-      <rect x="1.5" y="29.1" width="41" height="0.7" />
+      <rect x="0" y="38.1" width="54" height="1.2" />
+      <rect x="0" y="39.8" width="54" height="0.6" />
     </Mark>
   );
 }
 
 /**
- * HFES: a figure cut out of a disc. The head sits in the top segment; a
- * smooth curve of open arms and a line down from them part the disc into
- * the cup and two leaves.
+ * HFES: a disc parted by white gaps. At the top, the lens (the disc's cap
+ * above a curve) with the head cut out of it; two slivers at the edges
+ * between it and the band; below the band, a torso narrowing to a stem
+ * between two leaves.
  */
 export function HfesGlyph() {
   const id = useId();
+  // The lens is the top of the disc above this curve; a gap runs along it.
+  const curve = "M0.4 6.2Q12 10.6 23.6 6.2";
   return (
     <Mark viewBox="0 0 24 24" label="Human Factors and Ergonomics Society">
       <mask id={id}>
-        <circle cx="12" cy="12" r="11" fill="#fff" />
-        <g fill="none" stroke="#000" strokeWidth="1.7">
-          <path d="M0.6 9.2Q12 20.2 23.4 9.2" />
-          <path d="M12 14.7V23.5" />
+        <circle cx="12" cy="12" r="11.5" fill="#fff" />
+        {/* the gap under the lens; at the edges it leaves two slivers above the band */}
+        <path d={curve} fill="none" stroke="#000" strokeWidth="1.5" />
+        {/* the band across the middle */}
+        <rect x="0" y="8.9" width="24" height="1.9" fill="#000" />
+        {/* the head */}
+        <circle cx="12" cy="4.6" r="2.15" fill="#000" />
+        {/* the gaps either side of the torso, which narrows to a stem */}
+        <g fill="none" stroke="#000" strokeWidth="1.5">
+          <path d="M6.4 10.4C9 12.6 10.2 15.6 10.3 24" />
+          <path d="M17.6 10.4C15 12.6 13.8 15.6 13.7 24" />
         </g>
-        <circle cx="12" cy="6.7" r="2.7" fill="#000" />
       </mask>
       <rect width="24" height="24" mask={`url(#${id})`} />
     </Mark>
