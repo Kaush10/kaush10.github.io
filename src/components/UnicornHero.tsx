@@ -71,16 +71,18 @@ export function UnicornHero({
     let cancelled = false;
     let scene: Scene | undefined;
 
-    // Phones get a lighter render so the canvas doesn't eat the frame budget.
-    const small = window.matchMedia("(max-width: 767px)").matches;
+    // Render at the screen's own pixel density (capped at 2×), so the scene
+    // and the name it draws stay as sharp as the HTML around them. Anything
+    // lower is stretched by the browser and reads as soft.
+    const dpi = Math.min(window.devicePixelRatio || 1, 2);
 
     loadSdk()
       .then((sdk) =>
         sdk.addScene({
           element,
           projectId,
-          scale: small ? 0.5 : 1,
-          dpi: small ? 1 : 1.5,
+          scale: 1,
+          dpi,
           // Load from Unicorn's storage, not its CDN: the CDN can serve a stale
           // scene for a long time after a republish. A `?update=` tag on the
           // project id keeps each version cacheable in the browser.
