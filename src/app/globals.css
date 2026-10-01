@@ -403,8 +403,8 @@ body {
 
 /* ---- Résumé drop: the spotlight at the end of the timeline -------------
  * When .is-lit is set the lamp (the spine's end) warms up with the same
- * flicker as the bio's lamp, and the beam and pool flicker on with it. The
- * sheet (three.js) falls through them. Opacity and transform only. */
+ * flicker as the bio's lamp, and a soft glow comes up on the ground with it.
+ * The sheet (three.js) falls into that glow. Opacity and transform only. */
 .resume-lamp {
   width: 9px;
   height: 9px;
@@ -424,36 +424,17 @@ body {
   opacity: 0;
 }
 .resume-drop.is-lit .resume-filament,
-.resume-drop.is-lit .resume-beam,
 .resume-drop.is-lit .resume-pool {
   animation: lamp-warm 0.9s linear forwards;
 }
-.resume-beam {
-  transform: translateX(-50%);
-  filter: blur(24px);
-  opacity: 0;
-}
-.resume-beam::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(48.5% 0, 51.5% 0, 100% 100%, 0 100%);
-  background: linear-gradient(
-    to bottom,
-    rgb(255 255 255 / 0.05),
-    rgb(255 255 255 / 0.04) 30%,
-    rgb(255 255 255 / 0.028) 80%,
-    rgb(255 255 255 / 0.012)
-  );
-}
 .resume-pool {
-  /* A spotlight's pool on the ground: evenly lit across most of it, soft rim. */
+  /* Not a spotlight's pool: a soft, wide glow under the sheet that fades out
+     with no rim, so it reads as lit ground seen at a low angle. */
   background: radial-gradient(
     closest-side,
-    rgb(255 255 255 / 0.11),
-    rgb(255 255 255 / 0.09) 50%,
-    rgb(255 255 255 / 0.05) 75%,
-    rgb(255 255 255 / 0.015) 92%,
+    rgb(255 255 255 / 0.075),
+    rgb(255 255 255 / 0.04) 40%,
+    rgb(255 255 255 / 0.014) 70%,
     transparent
   );
   opacity: 0;
@@ -476,7 +457,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .resume-drop.is-lit .resume-filament,
-  .resume-drop.is-lit .resume-beam,
   .resume-drop.is-lit .resume-pool {
     animation: none;
     opacity: 1;
@@ -527,5 +507,35 @@ body {
   .resume-link,
   .resume-scroll {
     transition: none !important;
+  }
+}
+
+/* Phones: the bio's light is wide and soft enough to light the whole column,
+   so there's no hard cone or oval. */
+@media (max-width: 767px) {
+  .spot-lean {
+    width: 220%;
+  }
+  .spot-beam {
+    filter: blur(44px);
+  }
+  .spot-cone {
+    clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+    opacity: 0.75;
+  }
+  .spot-dust {
+    width: 100%;
+    margin-left: -50%;
+  }
+  .spot-wash {
+    background: radial-gradient(
+      ellipse 95% 60% at 50% 38%,
+      rgb(255 255 255 / 0.04),
+      rgb(255 255 255 / 0.018) 60%,
+      transparent 100%
+    );
+  }
+  .spot-text {
+    mask-image: radial-gradient(ellipse 120% 140% at 50% -10%, #000 55%, rgb(0 0 0 / 0.7) 100%);
   }
 }

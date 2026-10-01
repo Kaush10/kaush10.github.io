@@ -20,8 +20,8 @@ const HALF_DEPTH = PAPER_W / 2;
 const SEG_X = 28;
 const SEG_Y = 36;
 
-export const FALL = 2.3; // s from release to touchdown
-const SETTLE = 0.6; // s for the sheet to lie flat after touchdown
+export const FALL = 3.3; // s from release to touchdown
+const SETTLE = 0.9; // s for the sheet to lie flat after touchdown
 export const DURATION = FALL + SETTLE;
 
 const START_HEIGHT = 2.7;
@@ -32,6 +32,9 @@ const PITCH = 0.16; // rad, the nose-up/nose-down wobble
 const DISH = 0.14; // dish across the width at full speed
 const LEAD = 0.1; // leading-edge lift while gliding
 const CURL = 0.05; // gentle curl along the length
+// While it falls the sheet leans its face toward the viewer, so you see the
+// page, not its edge; it levels out as it nears the ground.
+const FACE = 0.75; // rad
 
 const smooth = (a: number, b: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -89,7 +92,8 @@ export function poseAt(t: number): Pose {
     const glide = Math.cos(phase); // lateral velocity, -1..1
     const speed = 0.35 + 0.65 * glide * glide; // how fast it's dropping, 0..1
     const roll = ROLL * swing * Math.sin(phase);
-    const pitch = PITCH * swing * Math.sin(1.55 * phase + 0.9);
+    const face = FACE * (1 - smooth(0.62, 0.98, s));
+    const pitch = face + PITCH * swing * Math.sin(1.55 * phase + 0.9);
     const dish = DISH * speed * swing + 0.02 * (1 - s);
     // The edge it's gliding toward lifts. (Local +v points to world −x after the quarter turn.)
     const lead = -LEAD * glide * swing;

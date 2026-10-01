@@ -145,16 +145,18 @@ export function ResumeDrop({ href }: { href: string }) {
     >
       {pool && (
         <>
-          {/* The beam, from the lamp at the end of the spine down to the pool. */}
-          <div
-            aria-hidden
-            className="resume-beam pointer-events-none absolute top-0"
-            style={{ left: apex, width: pool.w * 0.9, height: beamHeight }}
-          />
+          {/* No spotlight cone: the lamp at the spine's end just lights the
+              area, and a soft glow on the ground under the sheet shows the
+              ground's angle. */}
           <div
             aria-hidden
             className="resume-pool pointer-events-none absolute"
-            style={{ left: pool.x, top: pool.y, width: pool.w, height: pool.h }}
+            style={{
+              left: pool.x - pool.w * 0.35,
+              top: pool.y - pool.h * 0.6,
+              width: pool.w * 1.7,
+              height: pool.h * 2.2,
+            }}
           />
           {/* Dust drifting in the light. */}
           <div
