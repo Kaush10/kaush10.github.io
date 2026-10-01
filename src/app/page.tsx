@@ -19,8 +19,7 @@ const HEADLINE = "hey, its kaush";
 const HERO_SCENE = "P9NQwwDyqpdo8M1mJg53";
 const HERO_SCENE_VERSION = "20261001-0409";
 
-// TODO(kaush): swap in your Steam profile link.
-const STEAM_URL = "https://store.steampowered.com";
+const STEAM_URL = "https://steamcommunity.com/id/kaushreverse/";
 
 // TODO(kaush): confirm which email goes on the public site, your X handle,
 // and where the résumé lives.

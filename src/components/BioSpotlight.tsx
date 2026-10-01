@@ -87,12 +87,15 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
       raf = requestAnimationFrame(step);
     };
 
-    // On when most of the section is in view; off once it's nearly gone, so it replays.
+    // On when most of the section is in view. It stays on as you read on
+    // down the page, and only goes off when you scroll back up into the hero
+    // (the section has dropped below the fold), so it replays from there.
     const visibility = new IntersectionObserver(
       ([entry]) => {
         const lit = section.dataset.lit === "true";
+        const backInHero = entry.boundingClientRect.top > window.innerHeight * 0.5;
         if (!lit && entry.intersectionRatio > 0.42) section.dataset.lit = "true";
-        else if (lit && entry.intersectionRatio < 0.1) delete section.dataset.lit;
+        else if (lit && entry.intersectionRatio < 0.1 && backInHero) delete section.dataset.lit;
         active = entry.isIntersecting;
         if (active) frame();
       },
