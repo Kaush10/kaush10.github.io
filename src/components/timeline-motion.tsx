@@ -17,6 +17,7 @@ import {
 } from "react";
 
 import { float } from "@/components/fluid";
+import { timelineLit } from "@/components/timeline-light";
 
 const DESKTOP = "(min-width: 768px)";
 
@@ -99,6 +100,8 @@ export function SpineNode({ className = "" }: { className?: string }) {
     target: ref,
     offset: ["start 0.7", "start 0.5"],
   });
+  // Once the light at the end of the page is on, every dot stays lit.
+  const lit = useTransform(() => Math.max(scrollYProgress.get(), timelineLit.get()));
 
   // Where this dot sits along the track, re-measured whenever the track's size changes.
   useEffect(() => {
@@ -118,15 +121,12 @@ export function SpineNode({ className = "" }: { className?: string }) {
 
   // The entry this dot belongs to (its <li>) lights with it: --lit goes 0→1
   // as the dot does, and `.entry-dim` in globals.css reads it.
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
+  useMotionValueEvent(lit, "change", (v) => {
     ref.current?.parentElement?.style.setProperty("--lit", v.toFixed(3));
   });
   useEffect(() => {
-    ref.current?.parentElement?.style.setProperty(
-      "--lit",
-      scrollYProgress.get().toFixed(3),
-    );
-  }, [scrollYProgress]);
+    ref.current?.parentElement?.style.setProperty("--lit", lit.get().toFixed(3));
+  }, [lit]);
 
   const light = lightAt(at);
 
@@ -138,8 +138,8 @@ export function SpineNode({ className = "" }: { className?: string }) {
     >
       <motion.span
         style={{
-          opacity: scrollYProgress,
-          scale: scrollYProgress,
+          opacity: lit,
+          scale: lit,
           backgroundColor: light.color,
           boxShadow: light.glow,
         }}
@@ -151,7 +151,8 @@ export function SpineNode({ className = "" }: { className?: string }) {
 
 /**
  * Timeline list with a spine that fills in as the reader scrolls through it.
- * A light rides the leading edge, dimming from the top of the track to the bottom.
+ * A light rides the leading edge, dimming from the top of the track to the
+ * bottom, where it becomes the lamp over the résumé (see ResumeDrop).
  */
 export function TimelineTrack({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLOListElement>(null);
@@ -159,7 +160,9 @@ export function TimelineTrack({ children }: { children: ReactNode }) {
     target: ref,
     offset: ["start 0.6", "end 0.6"],
   });
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24 });
+  // Once the light at the end is on, the spine stays full.
+  const reach = useTransform(() => Math.max(scrollYProgress.get(), timelineLit.get()));
+  const progress = useSpring(reach, { stiffness: 120, damping: 24 });
   const beadTop = useTransform(progress, (p) => `${p * 100}%`);
   const beadOpacity = useTransform(progress, [0, 0.03, 0.97, 1], [0, 1, 1, 0]);
   const beadColor = useTransform(progress, (p) => lightAt(p).color);
@@ -172,7 +175,9 @@ export function TimelineTrack({ children }: { children: ReactNode }) {
   );
 
   return (
-    <ol ref={ref} data-track className="relative">
+    // flow-root keeps the last entry's margin inside the list, so the spine
+    // runs all the way down to the lamp under it.
+    <ol ref={ref} data-track className="relative flow-root">
       <span
         aria-hidden
         className="absolute inset-y-0 left-0 w-px -translate-x-1/2 bg-gradient-to-b from-white/10 via-white/[0.06] to-transparent md:left-1/2"

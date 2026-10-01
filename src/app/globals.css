@@ -401,52 +401,87 @@ body {
   opacity: calc(0.16 + 0.84 * var(--lit, 0));
 }
 
-/* ---- Résumé drop: the spotlight at the end of the page ----------------
- * The beam and pool come up when .is-lit is set; the sheet (three.js) falls
- * through them. Opacity and transform only. */
+/* ---- Résumé drop: the spotlight at the end of the timeline -------------
+ * When .is-lit is set the lamp (the spine's end) warms up with the same
+ * flicker as the bio's lamp, and the beam and pool flicker on with it. The
+ * sheet (three.js) falls through them. Opacity and transform only. */
+.resume-lamp {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  background: #161618;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+}
+.resume-filament {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #ece9e3;
+  box-shadow:
+    0 0 10px 2px rgb(255 255 255 / 0.5),
+    0 0 46px 8px rgb(255 255 255 / 0.1);
+  opacity: 0;
+}
+.resume-drop.is-lit .resume-filament,
+.resume-drop.is-lit .resume-beam,
+.resume-drop.is-lit .resume-pool {
+  animation: lamp-warm 0.9s linear forwards;
+}
 .resume-beam {
   transform: translateX(-50%);
-  filter: blur(26px);
+  filter: blur(24px);
   opacity: 0;
-  transition: opacity 0.6s ease;
 }
 .resume-beam::before {
   content: "";
   position: absolute;
   inset: 0;
-  clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
+  clip-path: polygon(48.5% 0, 51.5% 0, 100% 100%, 0 100%);
   background: linear-gradient(
     to bottom,
-    rgb(255 255 255 / 0.012),
-    rgb(255 255 255 / 0.05) 30%,
-    rgb(255 255 255 / 0.035) 80%,
-    rgb(255 255 255 / 0.015)
+    rgb(255 255 255 / 0.05),
+    rgb(255 255 255 / 0.04) 30%,
+    rgb(255 255 255 / 0.028) 80%,
+    rgb(255 255 255 / 0.012)
   );
 }
-.resume-drop.is-lit .resume-beam {
-  opacity: 1;
-  transition: opacity 1.4s ease;
-}
 .resume-pool {
-  /* A spotlight's pool: evenly lit across most of it, with a soft rim. */
+  /* A spotlight's pool on the ground: evenly lit across most of it, soft rim. */
   background: radial-gradient(
     closest-side,
-    rgb(255 255 255 / 0.15),
-    rgb(255 255 255 / 0.12) 50%,
-    rgb(255 255 255 / 0.07) 75%,
-    rgb(255 255 255 / 0.02) 92%,
+    rgb(255 255 255 / 0.11),
+    rgb(255 255 255 / 0.09) 50%,
+    rgb(255 255 255 / 0.05) 75%,
+    rgb(255 255 255 / 0.015) 92%,
     transparent
   );
   opacity: 0;
-  transform: scale(0.85);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
 }
-.resume-drop.is-lit .resume-pool {
+.resume-dust {
+  width: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.resume-drop.is-lit .resume-dust {
   opacity: 1;
-  transform: scale(1);
-  transition:
-    opacity 1.2s ease 0.15s,
-    transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s;
+  transition: opacity 2.6s ease 1s;
+}
+.resume-dust span {
+  position: absolute;
+  border-radius: 9999px;
+  background: #fff;
+  animation: mote-drift 14s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-drop.is-lit .resume-filament,
+  .resume-drop.is-lit .resume-beam,
+  .resume-drop.is-lit .resume-pool {
+    animation: none;
+    opacity: 1;
+  }
+  .resume-dust span {
+    animation: none;
+  }
 }

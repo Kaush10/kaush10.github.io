@@ -9,7 +9,6 @@ import {
 } from "@/components/glyphs";
 import { MorphLink } from "@/components/MorphLink";
 import { FrameDot, FrameRails, FrameRule } from "@/components/PageFrame";
-import { ResumeDrop } from "@/components/ResumeDrop";
 import { SpatialTimeline } from "@/components/SpatialTimeline";
 import { UnicornHero } from "@/components/UnicornHero";
 
@@ -114,12 +113,11 @@ export default function Home() {
         <FrameRule index="02" label="archive">
           <FrameDot variant="ring" />
         </FrameRule>
-        <SpatialTimeline />
-        <ResumeDrop href={RESUME_URL} />
+        <SpatialTimeline resumeHref={RESUME_URL} />
       </div>
 
       {/* The frame closes here, with a dim dot answering the hero's. */}
-      <footer className="relative h-[28dvh]">
+      <footer className="relative h-[22dvh]">
         <FrameRule
           index="end"
           label={`© ${new Date().getFullYear()}`}

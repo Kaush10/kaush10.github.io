@@ -20,7 +20,7 @@ const FALL = 3.3; // s from release to touchdown
 const SETTLE = 0.9; // s for the sheet to lie flat after touchdown
 export const DURATION = FALL + SETTLE;
 
-const START_HEIGHT = 2.95;
+const START_HEIGHT = 2.7;
 const SWINGS = 2.25; // full side-to-side cycles during the fall
 const SWAY = 0.62; // lateral reach of a swing
 const ROLL = 0.62; // rad, tilt at the end of a swing
@@ -75,8 +75,9 @@ type Pose = {
 export function poseAt(t: number): Pose {
   const s = t / FALL;
   const yaw = -0.42 + 0.58 * smooth(0, 1.15, s);
-  const opacity = smooth(0.02, 0.24, s);
-  const blur = 1 - smooth(0.04, 0.3, s);
+  // It comes out of the dark slowly: fading and sharpening over half the fall.
+  const opacity = smooth(0.02, 0.5, s);
+  const blur = 1 - smooth(0.03, 0.55, s);
 
   if (s <= 1) {
     const phase = 2 * Math.PI * SWINGS * s;
@@ -127,7 +128,7 @@ function paperTexture(anisotropy: number) {
   canvas.width = W;
   canvas.height = H;
   const c = canvas.getContext("2d")!;
-  c.fillStyle = "#ecebe7";
+  c.fillStyle = "#cbc8c0";
   c.fillRect(0, 0, W, H);
   const m = W * 0.1;
   const bar = (x: number, y: number, w: number, h: number, shade: number) => {
@@ -160,6 +161,37 @@ function paperTexture(anisotropy: number) {
     }
     y += 8;
   }
+  // Matte paper: grain over everything, a few faint fibers, and edges a shade
+  // darker, so it never reads as a flat white card.
+  const image = c.getImageData(0, 0, W, H);
+  const px = image.data;
+  let seed = 7;
+  const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < px.length; i += 4) {
+    const n = (random() - 0.5) * 30;
+    px[i] += n;
+    px[i + 1] += n;
+    px[i + 2] += n;
+  }
+  c.putImageData(image, 0, 0);
+  c.lineWidth = 1;
+  for (let i = 0; i < 260; i++) {
+    const x = random() * W;
+    const y0 = random() * H;
+    const len = 6 + random() * 18;
+    const a = random() * Math.PI;
+    c.strokeStyle = `rgb(${random() < 0.5 ? "120 118 112" : "235 232 226"} / ${(0.05 + random() * 0.08).toFixed(3)})`;
+    c.beginPath();
+    c.moveTo(x, y0);
+    c.lineTo(x + Math.cos(a) * len, y0 + Math.sin(a) * len);
+    c.stroke();
+  }
+  const edge = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.hypot(W, H) * 0.55);
+  edge.addColorStop(0, "rgb(0 0 0 / 0)");
+  edge.addColorStop(1, "rgb(40 36 30 / 0.28)");
+  c.fillStyle = edge;
+  c.fillRect(0, 0, W, H);
+
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = anisotropy;
@@ -189,7 +221,7 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
 
   // The spotlight, straight down from above with a soft edge, and only a trace of room light.
-  const spot = new THREE.SpotLight("#fffaf2", 46, 20, 0.36, 0.85, 1.4);
+  const spot = new THREE.SpotLight("#fff6ea", 30, 20, 0.36, 0.85, 1.4);
   spot.position.set(0, 7.5, 0.15);
   spot.target.position.set(0, 0, 0);
   spot.castShadow = true;
@@ -217,7 +249,7 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
   const texture = paperTexture(renderer.capabilities.getMaxAnisotropy());
   const material = new THREE.MeshStandardMaterial({
     map: texture,
-    roughness: 0.92,
+    roughness: 1,
     metalness: 0,
     side: THREE.DoubleSide,
     transparent: true,
@@ -253,8 +285,9 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
     camera.aspect = w / h;
     // Keep the pool and the drop in frame on narrow screens: back the camera off.
     const back = camera.aspect < 1 ? 1 / camera.aspect : 1;
-    camera.position.set(0, 4.6 * back, 7.2 * back);
-    camera.lookAt(0, 0.95, 0);
+    // A low eye line, so the ground is steeply foreshortened and the pool a flat oval.
+    camera.position.set(0, 3.1 * back, 8.6 * back);
+    camera.lookAt(0, 1.05, 0);
     camera.updateProjectionMatrix();
   };
   resize();

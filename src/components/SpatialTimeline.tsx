@@ -1,3 +1,4 @@
+import { ResumeDrop } from "@/components/ResumeDrop";
 import {
   FloatingEntry,
   SpineNode,
@@ -162,14 +163,14 @@ function RoleBody({ role, side }: { role: Role; side: Side }) {
   );
 }
 
-export function SpatialTimeline() {
+export function SpatialTimeline({ resumeHref }: { resumeHref: string }) {
   let floatIndex = 0;
 
   return (
     <section
       id="archive"
       aria-labelledby="archive-heading"
-      className="relative mx-auto w-full max-w-4xl px-10 py-32 md:px-6"
+      className="relative mx-auto w-full max-w-4xl px-10 pt-32 md:px-6"
     >
       <h2 id="archive-heading" className="sr-only">
         archive
@@ -224,6 +225,8 @@ export function SpatialTimeline() {
           );
         })}
       </TimelineTrack>
+      {/* Directly under the spine, so the spine's end is the lamp. */}
+      <ResumeDrop href={resumeHref} />
     </section>
   );
 }
