@@ -1,4 +1,8 @@
-import { FloatingEntry, SpineNode, TimelineTrack } from "@/components/timeline-motion";
+import {
+  FloatingEntry,
+  SpineNode,
+  TimelineTrack,
+} from "@/components/timeline-motion";
 
 type Role = {
   period: string;
@@ -12,7 +16,13 @@ type Side = "left" | "right";
 
 type Entry =
   | ({ kind: "role"; side: Side } & Role)
-  | { kind: "cluster"; side: Side; label: string; period: string; roles: Role[] };
+  | {
+      kind: "cluster";
+      side: Side;
+      label: string;
+      period: string;
+      roles: Role[];
+    };
 
 const entries: Entry[] = [
   {
@@ -30,7 +40,8 @@ const entries: Entry[] = [
     period: "2026",
     title: "Multimodal HCI Researcher",
     org: "Yonsei University (SeoulWalk)",
-    summary: "Zero-guess spatial navigation engine mitigating LLM hallucinations.",
+    summary:
+      "Zero-guess spatial navigation engine mitigating LLM hallucinations.",
     stack: ["Expo", "React Native", "FastAPI", "CV", "RAG"],
   },
   {
@@ -39,7 +50,8 @@ const entries: Entry[] = [
     period: "2026",
     title: "Lead Product Designer",
     org: "R&R Custom Homes",
-    summary: "Editorial web architecture and typography for luxury residential builds.",
+    summary:
+      "Editorial web architecture and typography for luxury residential builds.",
     stack: ["Next.js", "Tailwind CSS", "Typography Systems"],
   },
   {
@@ -61,19 +73,22 @@ const entries: Entry[] = [
         period: "2025",
         title: "IT Intern (Enterprise UX)",
         org: "HOERBIGER",
-        summary: "Fleet-wide migration design systems and automated power workflows.",
+        summary:
+          "Fleet-wide migration design systems and automated power workflows.",
       },
       {
         period: "2025",
         title: "UX Development Intern",
         org: "MetalTek International",
-        summary: "Corporate intranet information architecture and internal discovery search.",
+        summary:
+          "Corporate intranet information architecture and internal discovery search.",
       },
       {
         period: "2024",
         title: "IT Intern",
         org: "Deublin Company",
-        summary: "Global people & culture portal architecture and ERP process blueprints.",
+        summary:
+          "Global people & culture portal architecture and ERP process blueprints.",
       },
     ],
   },
@@ -83,7 +98,8 @@ const entries: Entry[] = [
     period: "2024",
     title: "Undergraduate ML Researcher",
     org: "Dr. Zhang Lab (UIUC)",
-    summary: "Large-scale algorithmic data modeling and decision tree optimization.",
+    summary:
+      "Large-scale algorithmic data modeling and decision tree optimization.",
   },
   {
     kind: "role",
@@ -112,7 +128,9 @@ const sideClasses = {
 function RoleBody({ role, side }: { role: Role; side: Side }) {
   return (
     <div className="group">
-      <p className="font-mono text-xs tracking-wider text-muted uppercase">{role.period}</p>
+      <p className="font-mono text-xs tracking-wider text-muted uppercase">
+        {role.period}
+      </p>
       <h3 className="mt-2 text-base leading-snug font-medium text-foreground">
         {role.title}{" "}
         <span className="text-muted transition-colors duration-500 group-hover:text-foreground/80">
@@ -153,11 +171,8 @@ export function SpatialTimeline() {
       aria-labelledby="archive-heading"
       className="relative mx-auto w-full max-w-4xl px-10 py-32 md:px-6"
     >
-      <h2
-        id="archive-heading"
-        className="mb-24 font-mono text-xs tracking-widest text-white/40 uppercase md:text-center"
-      >
-        {"// archive_01: systems & operational provenance"}
+      <h2 id="archive-heading" className="sr-only">
+        archive
       </h2>
 
       <TimelineTrack>
@@ -172,23 +187,26 @@ export function SpatialTimeline() {
                 className={`relative my-20 scroll-mt-32 pl-10 ${side.item}`}
               >
                 <SpineNode className={side.node} />
-                <p className="font-mono text-[11px] tracking-widest text-white/40 uppercase">
-                  {entry.label} <span className="whitespace-nowrap">[{entry.period}]</span>
-                </p>
-                <div className="relative mt-6 pl-7">
-                  <span
-                    aria-hidden
-                    className="absolute inset-y-0 left-0 w-3 border-y border-l border-white/15"
-                  />
-                  <ul className="space-y-8 py-2">
-                    {entry.roles.map((role) => (
-                      <li key={role.org}>
-                        <FloatingEntry index={floatIndex++} side="right">
-                          <RoleBody role={role} side="right" />
-                        </FloatingEntry>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="entry-dim">
+                  <p className="font-mono text-[11px] tracking-widest text-white/40 uppercase">
+                    {entry.label}{" "}
+                    <span className="whitespace-nowrap">[{entry.period}]</span>
+                  </p>
+                  <div className="relative mt-6 pl-7">
+                    <span
+                      aria-hidden
+                      className="absolute inset-y-0 left-0 w-3 border-y border-l border-white/15"
+                    />
+                    <ul className="space-y-8 py-2">
+                      {entry.roles.map((role) => (
+                        <li key={role.org}>
+                          <FloatingEntry index={floatIndex++} side="right">
+                            <RoleBody role={role} side="right" />
+                          </FloatingEntry>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </li>
             );
@@ -197,9 +215,11 @@ export function SpatialTimeline() {
           return (
             <li key={entry.org} className={`relative my-20 pl-10 ${side.item}`}>
               <SpineNode className={side.node} />
-              <FloatingEntry index={floatIndex++} side={entry.side}>
-                <RoleBody role={entry} side={entry.side} />
-              </FloatingEntry>
+              <div className="entry-dim">
+                <FloatingEntry index={floatIndex++} side={entry.side}>
+                  <RoleBody role={entry} side={entry.side} />
+                </FloatingEntry>
+              </div>
             </li>
           );
         })}

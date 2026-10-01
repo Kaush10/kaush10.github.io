@@ -7,15 +7,16 @@ import { FrameRule } from "@/components/PageFrame";
 // The bio sits in the dark until you reach it. Then the dot on its header rule
 // (the same dot the hero has) warms up like a lamp and lights the page.
 //
-// The scene has depth. The frame and lamp are the front plane. The bio sits
-// on a wall well behind it: it moves less than the frame when you scroll or
-// move the pointer, and you read it through the beam, which hangs in the air
-// between. The light lands on the wall brightest near its top, closest to the
-// lamp, and shows the wall's grain only where it falls. Dust drifts at three
-// depths: far specks are small and sharp, near ones big, soft and slow.
+// The section is a recess pressed a few inches into the frame, and the lamp
+// on its top rim lights the inside: the floor and lower walls catch the light,
+// the ceiling stays dark, the seams show where the light reaches, and a pool
+// lands on the back panel brightest near its top, closest to the lamp. You
+// read the bio through the beam, which hangs in the air in front of it. Dust
+// drifts at three depths: far specks small and sharp, near ones big and soft.
 //
-// Everything animates opacity and transform only (see `.spot` in
-// globals.css). JS switches the light, and moves the layers for parallax.
+// The text itself never moves. Everything animates opacity and transform only
+// (see `.spot` and `.recess` in globals.css); JS switches the light and leans
+// the beam and dust toward the pointer.
 
 type Mote = { x: number; y: number; delay: number; duration: number };
 
@@ -45,24 +46,15 @@ const DEPTHS = [
   { name: "near", motes: motes(5, 41), shift: 22 },
 ] as const;
 
-// How much the bio's wall lags the page while scrolling (0 = none).
-const WALL_DEPTH = 0.12;
-// How far, in px, the wall moves with the pointer (negative: away from it).
-const WALL_SHIFT = -7;
-
 export function BioSpotlight({ children }: { children: ReactNode }) {
   const sectionRef = useRef<HTMLElement>(null);
   const leanRef = useRef<HTMLDivElement>(null);
-  const wallRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
   const dustRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const section = sectionRef.current;
     const lean = leanRef.current;
-    const wall = wallRef.current;
-    const text = textRef.current;
-    if (!section || !lean || !wall || !text) return;
+    if (!section || !lean) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let active = false;
@@ -73,25 +65,13 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
       pointer.x += (pointer.tx - pointer.x) * 0.07;
       pointer.y += (pointer.ty - pointer.y) * 0.07;
 
-      // The wall lags the scroll: the further the section is from the middle
-      // of the screen, the more it's held back toward it.
-      const s = section.getBoundingClientRect();
-      const scrollLag = -(s.top + s.height / 2 - window.innerHeight / 2) * WALL_DEPTH;
-
-      const wallTransform = `translate3d(${(pointer.x * WALL_SHIFT).toFixed(2)}px, ${(
-        pointer.y * WALL_SHIFT * 0.6 +
-        scrollLag
-      ).toFixed(2)}px, 0)`;
-      wall.style.transform = wallTransform;
-      text.style.transform = wallTransform;
-
       lean.style.transform = `translateX(-50%) rotate(${(-pointer.x * 2.5).toFixed(3)}deg)`;
 
       DEPTHS.forEach((depth, i) => {
         const layer = dustRefs.current[i];
         if (!layer) return;
-        // Nearer dust is nearer the frame, so it lags the scroll less than the wall does.
-        const y = pointer.y * depth.shift * 0.6 + scrollLag * (1 - depth.shift / 22);
+        // Nearer dust moves more with the pointer, which reads as nearer.
+        const y = pointer.y * depth.shift * 0.6;
         layer.style.transform = `translate3d(${(pointer.x * depth.shift).toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
       });
 
@@ -123,17 +103,11 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
       pointer.ty = ((event.clientY - s.top) / s.height - 0.5) * 2;
       frame();
     };
-    // Scrolling moves the section, so the lag needs a new frame too.
-    const onScroll = () => {
-      if (active) frame();
-    };
     section.addEventListener("pointermove", onPointer);
-    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       visibility.disconnect();
       section.removeEventListener("pointermove", onPointer);
-      window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(raf);
     };
   }, []);
@@ -145,15 +119,26 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
     <section
       ref={sectionRef}
       id="about"
-      className="spot relative flex min-h-[100dvh] scroll-mt-0 flex-col items-center justify-center px-10 pt-[calc(8rem+2*var(--frame-top))] pb-32 md:px-6"
+      className="spot relative flex min-h-[100dvh] scroll-mt-0 flex-col items-center justify-center px-12 pt-[calc(8rem+2*var(--frame-top))] pb-32 md:px-6"
     >
-      {/* Back: the wall the bio sits on, lit only where the beam lands. */}
-      <div ref={wallRef} aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="spot-wash" />
-        <div className="spot-grain" />
+      {/* The recess: the page is set a few inches into the frame here. Its walls
+          run from the frame's edge back to a panel the bio sits on; the lamp on
+          the top rim lights the floor and lower walls and leaves the ceiling dark. */}
+      <div aria-hidden className="recess pointer-events-none">
+        <div className="recess-wall recess-left" />
+        <div className="recess-wall recess-right" />
+        <div className="recess-wall recess-floor" />
+        <div className="recess-panel">
+          <div className="spot-wash" />
+          <div className="spot-grain" />
+        </div>
+        <span className="recess-seam recess-seam-tl" />
+        <span className="recess-seam recess-seam-tr" />
+        <span className="recess-seam recess-seam-bl" />
+        <span className="recess-seam recess-seam-br" />
       </div>
 
-      <div ref={textRef} className="relative mx-auto w-full max-w-[37.8rem]">
+      <div className="relative mx-auto w-full max-w-[37.8rem]">
         {children}
         {/* Dark until lit; once lit, it falls off with distance from the lamp. */}
         <div aria-hidden className="spot-dark pointer-events-none absolute -inset-x-[12%] -inset-y-[16%]" />

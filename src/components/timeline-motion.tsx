@@ -2,6 +2,7 @@
 
 import {
   motion,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -88,7 +89,8 @@ export function lightAt(t: number) {
 
 /**
  * Dot on the spine that lights up as the reader reaches it, in the colour the
- * travelling light has at that point (so lower dots light dimmer).
+ * travelling light has at that point (so lower dots light dimmer). Its entry
+ * stays dim until then and comes up with it.
  */
 export function SpineNode({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -113,6 +115,18 @@ export function SpineNode({ className = "" }: { className?: string }) {
     observer.observe(list);
     return () => observer.disconnect();
   }, []);
+
+  // The entry this dot belongs to (its <li>) lights with it: --lit goes 0→1
+  // as the dot does, and `.entry-dim` in globals.css reads it.
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    ref.current?.parentElement?.style.setProperty("--lit", v.toFixed(3));
+  });
+  useEffect(() => {
+    ref.current?.parentElement?.style.setProperty(
+      "--lit",
+      scrollYProgress.get().toFixed(3),
+    );
+  }, [scrollYProgress]);
 
   const light = lightAt(at);
 

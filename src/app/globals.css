@@ -280,22 +280,17 @@ body {
   100% { transform: translate(calc(3px * var(--a)), calc(16px * var(--a))); opacity: 0.6; }
 }
 
-/* Wash: the pool of light on the wall behind the text. The lamp is in front
-   of the wall and above it, so the pool is a tall ellipse, brightest near its
-   top (closest to the lamp) and falling off below. */
+/* Wash: the pool of light on the back panel. The lamp is in front of the
+   panel and above it, so the pool is a tall ellipse, brightest near its top
+   (closest to the lamp) and falling off below. */
 .spot-wash,
 .spot-grain {
-  /* Overhangs the section so the pool's ellipse never meets an edge. */
   position: absolute;
-  top: -10%;
-  left: 50%;
-  width: min(64rem, 125%);
-  height: 120%;
-  transform: translateX(-50%);
+  inset: 0;
 }
 .spot-wash {
   background: radial-gradient(
-    ellipse 48% 37% at 50% 40%,
+    ellipse 46% 36% at 50% 38%,
     rgb(255 255 255 / 0.07),
     rgb(255 255 255 / 0.028) 50%,
     transparent 100%
@@ -306,7 +301,7 @@ body {
 /* The wall's grain, visible only where the light falls on it. */
 .spot-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mask-image: radial-gradient(ellipse 44% 34% at 50% 41%, #000, rgb(0 0 0 / 0.4) 50%, transparent 100%);
+  mask-image: radial-gradient(ellipse 42% 33% at 50% 39%, #000, rgb(0 0 0 / 0.4) 50%, transparent 100%);
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -350,6 +345,110 @@ body {
   transition: opacity 1.4s ease 0.7s;
 }
 
+/* ---- Recess: the bio's page is pressed a few inches into the frame ----
+ * The outer edge is the frame itself (rails and rules). --d is how far in the
+ * back panel sits, the same on every side since you look at it straight on,
+ * which makes the corner seams 45° lines. The lamp is on the top rim, so the
+ * ceiling stays dark, the side walls brighten toward the floor, and the floor
+ * is brightest where it meets the panel under the beam. */
+.recess {
+  --d: clamp(18px, 4.5vw, 72px);
+  position: absolute;
+  top: var(--frame-top);
+  left: var(--frame-x);
+  right: var(--frame-x);
+  height: 100%;
+}
+.recess-wall {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.spot[data-lit] .recess-wall {
+  opacity: 1;
+  transition: opacity 1.8s ease 0.5s;
+}
+.recess-left {
+  clip-path: polygon(0 0, var(--d) var(--d), var(--d) calc(100% - var(--d)), 0 100%);
+  background: linear-gradient(
+    to bottom,
+    transparent 8%,
+    rgb(255 255 255 / 0.018) 45%,
+    rgb(255 255 255 / 0.045) 100%
+  );
+}
+.recess-right {
+  clip-path: polygon(
+    100% 0,
+    100% 100%,
+    calc(100% - var(--d)) calc(100% - var(--d)),
+    calc(100% - var(--d)) var(--d)
+  );
+  background: linear-gradient(
+    to bottom,
+    transparent 8%,
+    rgb(255 255 255 / 0.018) 45%,
+    rgb(255 255 255 / 0.045) 100%
+  );
+}
+.recess-floor {
+  clip-path: polygon(
+    var(--d) calc(100% - var(--d)),
+    calc(100% - var(--d)) calc(100% - var(--d)),
+    100% 100%,
+    0 100%
+  );
+  background: radial-gradient(
+    ellipse 42% 100% at 50% calc(100% - var(--d)),
+    rgb(255 255 255 / 0.075),
+    rgb(255 255 255 / 0.025) 55%,
+    transparent 85%
+  );
+}
+.recess-panel {
+  position: absolute;
+  inset: var(--d);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.03);
+  transition: border-color 0.5s ease;
+}
+.spot[data-lit] .recess-panel {
+  /* The panel's edges: dark under the ceiling, catching light at the floor. */
+  border-color: rgb(255 255 255 / 0.03) rgb(255 255 255 / 0.055) rgb(255 255 255 / 0.1);
+  transition: border-color 1.8s ease 0.5s;
+}
+.recess-seam {
+  position: absolute;
+  width: calc(var(--d) * 1.4142);
+  height: 1px;
+  opacity: 0.35;
+  transition: opacity 0.5s ease;
+}
+.spot[data-lit] .recess-seam {
+  opacity: 1;
+  transition: opacity 1.8s ease 0.5s;
+}
+.recess-seam-tl,
+.recess-seam-tr {
+  top: 0;
+  background: rgb(255 255 255 / 0.05);
+}
+.recess-seam-bl,
+.recess-seam-br {
+  bottom: 0;
+  background: linear-gradient(to right, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.12));
+}
+.recess-seam-tl { left: 0; transform-origin: 0 50%; transform: rotate(45deg); }
+.recess-seam-tr { right: 0; transform-origin: 100% 50%; transform: rotate(-45deg); }
+.recess-seam-bl { left: 0; transform-origin: 0 50%; transform: rotate(-45deg); }
+.recess-seam-br {
+  right: 0;
+  transform-origin: 100% 50%;
+  transform: rotate(45deg);
+  background: linear-gradient(to left, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.12));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .spot *,
   .spot[data-lit] * {
@@ -360,4 +459,10 @@ body {
   .spot[data-lit] .spot-halo {
     opacity: 1;
   }
+}
+
+/* Timeline entries stay dim until their dot on the spine lights; --lit (0–1)
+   is set on each entry's <li> by SpineNode as the dot comes up. */
+.entry-dim {
+  opacity: calc(0.16 + 0.84 * var(--lit, 0));
 }
