@@ -13,6 +13,10 @@ import * as THREE from "three";
 
 const PAPER_W = 1;
 const PAPER_H = 11 / 8.5;
+// The sheet lies turned a quarter, long side toward the viewer: its length
+// runs side to side (the axis it swings and rocks along), its width front to back.
+const HALF_SIDE = PAPER_H / 2;
+const HALF_DEPTH = PAPER_W / 2;
 const SEG_X = 28;
 const SEG_Y = 36;
 
@@ -87,10 +91,11 @@ export function poseAt(t: number): Pose {
     const roll = ROLL * swing * Math.sin(phase);
     const pitch = PITCH * swing * Math.sin(1.55 * phase + 0.9);
     const dish = DISH * speed * swing + 0.02 * (1 - s);
-    const lead = LEAD * glide * swing;
+    // The edge it's gliding toward lifts. (Local +v points to world −x after the quarter turn.)
+    const lead = -LEAD * glide * swing;
     const curl = CURL * Math.sin(0.8 * phase + 0.4) * swing;
     // It never sinks into the ground: the lowest point of the tipped, bent sheet sits on it.
-    const clearance = (PAPER_W / 2) * Math.abs(Math.sin(roll)) + (PAPER_H / 2) * Math.abs(Math.sin(pitch)) + Math.max(0, -dish) + Math.abs(lead) * 0.5;
+    const clearance = HALF_SIDE * Math.abs(Math.sin(roll)) + HALF_DEPTH * Math.abs(Math.sin(pitch)) + Math.max(0, -dish) + Math.abs(lead) * 0.5;
     return {
       x: SWAY * swing * Math.sin(phase) * 0.9 + 0.08 * (1 - s),
       y: Math.max(heightAt(s), clearance + 0.004),
@@ -116,7 +121,7 @@ export function poseAt(t: number): Pose {
   const dish = end.dish * flatten;
   const lead = end.lead * flatten;
   const curl = end.curl * flatten;
-  const clearance = (PAPER_W / 2) * Math.abs(Math.sin(roll)) + (PAPER_H / 2) * Math.abs(Math.sin(pitch)) + Math.abs(lead) * 0.5;
+  const clearance = HALF_SIDE * Math.abs(Math.sin(roll)) + HALF_DEPTH * Math.abs(Math.sin(pitch)) + Math.abs(lead) * 0.5;
   return { x: end.x, y: clearance + 0.004, z: end.z, roll, pitch, yaw: end.yaw, dish, lead, curl, opacity: 1, blur: 0 };
 }
 
@@ -260,18 +265,21 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
   // Rotation order: lie flat, turn about the vertical (yaw), then tip (roll, pitch).
   const holder = new THREE.Group();
   holder.add(sheet);
-  sheet.rotation.x = -Math.PI / 2;
+  // Lie flat, turned a quarter in its own plane: length side to side.
+  sheet.rotation.set(-Math.PI / 2, 0, Math.PI / 2);
   scene.add(holder);
 
   const bend = (dish: number, lead: number, curl: number) => {
     const pos = geometry.attributes.position.array as Float32Array;
     for (let i = 0; i < pos.length; i += 3) {
+      // v runs along the length, which lies side to side; u along the width, front to back.
       const u = rest[i] / (PAPER_W / 2);
       const v = rest[i + 1] / (PAPER_H / 2);
-      // local z is the sheet's normal; after lying flat it points up
-      pos[i + 2] = dish * u * u + lead * u * u * u + curl * v * v;
-      // keep the sheet's width roughly constant as it bends
-      pos[i] = rest[i] * (1 - 0.5 * (dish * dish + lead * lead) * u * u);
+      // local z is the sheet's normal; after lying flat it points up. The
+      // dish and the lifted leading edge are across the swing (along v).
+      pos[i + 2] = dish * v * v + lead * v * v * v + curl * u * u;
+      // keep the sheet's length roughly constant as it bends
+      pos[i + 1] = rest[i + 1] * (1 - 0.5 * (dish * dish + lead * lead) * v * v);
     }
     geometry.attributes.position.needsUpdate = true;
     geometry.computeVertexNormals();
@@ -286,7 +294,7 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
     // Keep the pool and the drop in frame on narrow screens: back the camera off.
     const back = camera.aspect < 1 ? 1 / camera.aspect : 1;
     // A low eye line, so the ground is steeply foreshortened and the pool a flat oval.
-    camera.position.set(0, 3.1 * back, 8.6 * back);
+    camera.position.set(0, 2.4 * back, 9.2 * back);
     camera.lookAt(0, 1.05, 0);
     camera.updateProjectionMatrix();
   };

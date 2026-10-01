@@ -485,3 +485,47 @@ body {
     animation: none;
   }
 }
+
+/* [resume]: hidden until the sheet lands, then the brackets part from the
+   middle like a scroll unrolling (the word's column grows from 0 to its
+   width, centred, so it's revealed from the middle out) while the link
+   fades in from a blur. */
+.resume-link {
+  opacity: 0;
+  filter: blur(6px);
+  transition:
+    opacity 0.5s ease,
+    filter 0.5s ease,
+    color 0.3s ease;
+}
+.resume-link[data-open] {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity 1.1s ease,
+    filter 1.3s ease,
+    color 0.3s ease;
+}
+.resume-scroll {
+  display: grid;
+  grid-template-columns: 0fr;
+  transition: grid-template-columns 0.5s ease;
+}
+.resume-scroll > span {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-inline: 0.1em;
+}
+.resume-link[data-open] .resume-scroll {
+  grid-template-columns: 1fr;
+  transition: grid-template-columns 1.1s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .resume-link,
+  .resume-scroll {
+    transition: none !important;
+  }
+}

@@ -20,7 +20,7 @@ const BLUR_MAX = 10; // px, how soft the sheet is before it enters the light
 type Rect = { x: number; y: number; w: number; h: number };
 
 // Dust in the beam, mostly low down where the light is strongest on the air.
-const MOTES = Array.from({ length: 22 }, (_, i) => {
+const MOTES = Array.from({ length: 9 }, (_, i) => {
   const r = (n: number) => {
     const x = Math.sin((i + 1) * 91.17 * n) * 43758.5453;
     return x - Math.floor(x);
@@ -190,19 +190,26 @@ export function ResumeDrop({ href }: { href: string }) {
         className="absolute inset-x-0 flex justify-center"
         style={{ top: pool ? pool.y + pool.h + 18 : "auto" }}
       >
+        {/* The brackets start together and part like a scroll unrolling,
+            revealing the word from its middle out, as the whole link
+            fades in from a blur. */}
         <a
           href={href}
           target="_blank"
           rel="noreferrer"
           tabIndex={landed ? 0 : -1}
           aria-hidden={!landed}
-          className={`resume-link inline-flex min-h-11 items-center rounded-full border border-white/[0.1] bg-white/[0.03] px-3.5 py-1.5 font-mono text-[11px] tracking-wider text-white/75 transition-all duration-1000 hover:border-white/30 hover:bg-white/[0.06] hover:text-white focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-white/60 ${
-            landed
-              ? "translate-y-0 opacity-100"
-              : "pointer-events-none translate-y-1.5 opacity-0"
+          aria-label="resume"
+          data-open={landed || undefined}
+          className={`resume-link inline-flex min-h-11 items-center font-mono text-[12px] tracking-wider text-white/70 transition-colors hover:text-white focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/60 ${
+            landed ? "" : "pointer-events-none"
           }`}
         >
-          [resume]
+          <span aria-hidden>[</span>
+          <span aria-hidden className="resume-scroll">
+            <span>resume</span>
+          </span>
+          <span aria-hidden>]</span>
         </a>
       </div>
     </div>
