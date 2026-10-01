@@ -1,17 +1,15 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 
 /**
- * Headline and scroll cue over the hero. Scrolling away lifts the headline,
- * softens it out of focus, and dims the scene behind it.
+ * Over the hero scene: the page heading, the scroll cue, and a dim that comes
+ * up as you scroll away. The headline itself is drawn by the scene (its
+ * `text` layer), which also fades and lifts it on scroll, so the heading
+ * here is for screen readers and search only.
  */
 export function HeroOverlay({ headline }: { headline: string }) {
-  const reduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 700], [0, -140]);
-  const opacity = useTransform(scrollY, [0, 520], [1, 0]);
-  const blur = useTransform(scrollY, [0, 520], ["blur(0px)", "blur(10px)"]);
   const dim = useTransform(scrollY, [0, 700], [0, 0.75]);
   const cueOpacity = useTransform(scrollY, [0, 160], [1, 0]);
 
@@ -23,12 +21,7 @@ export function HeroOverlay({ headline }: { headline: string }) {
         className="pointer-events-none absolute inset-0 bg-black"
       />
 
-      <motion.h1
-        style={reduceMotion ? { opacity } : { y, opacity, filter: blur }}
-        className="pointer-events-none absolute inset-x-0 top-[72%] -translate-y-1/2 px-6 text-center font-serif text-[clamp(3rem,8vw,6.5rem)] leading-none tracking-[-0.01em] text-foreground [text-shadow:0_0_48px_rgb(255_255_255/0.28)]"
-      >
-        {headline}
-      </motion.h1>
+      <h1 className="sr-only">{headline}</h1>
 
       <motion.a
         href="#about"

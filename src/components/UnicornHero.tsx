@@ -81,7 +81,10 @@ export function UnicornHero({
           projectId,
           scale: small ? 0.5 : 1,
           dpi: small ? 1 : 1.5,
-          production: true,
+          // Load from Unicorn's storage, not its CDN: the CDN can serve a stale
+          // scene for a long time after a republish. A `?update=` tag on the
+          // project id keeps each version cacheable in the browser.
+          production: false,
         }),
       )
       .then((created) => {

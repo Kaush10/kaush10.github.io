@@ -13,6 +13,11 @@ import { UnicornHero } from "@/components/UnicornHero";
 
 const HEADLINE = "hey, its kaush";
 
+// The hero's Unicorn Studio scene. After republishing it, bump the version
+// (any new value, e.g. the publish time) so browsers fetch the new one.
+const HERO_SCENE = "P9NQwwDyqpdo8M1mJg53";
+const HERO_SCENE_VERSION = "20261001-0409";
+
 const links = [
   { label: "vinskal", href: "https://vinskal.com" },
   { label: "github", href: "https://github.com/Kaush10" },
@@ -25,7 +30,7 @@ export default function Home() {
       <FrameRails />
 
       <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-black select-none">
-        <UnicornHero projectId="P9NQwwDyqpdo8M1mJg53" hiddenLayers={["text"]} />
+        <UnicornHero projectId={`${HERO_SCENE}?update=${HERO_SCENE_VERSION}`} />
 
         <div
           aria-hidden
