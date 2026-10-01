@@ -2,6 +2,7 @@ import { BioSpotlight } from "@/components/BioSpotlight";
 import { HeroOverlay } from "@/components/HeroOverlay";
 import {
   IndustrialGlyph,
+  SteamGlyph,
   UiucGlyph,
   VinskalGlyph,
   YonseiGlyph,
@@ -17,6 +18,9 @@ const HEADLINE = "hey, its kaush";
 // (any new value, e.g. the publish time) so browsers fetch the new one.
 const HERO_SCENE = "P9NQwwDyqpdo8M1mJg53";
 const HERO_SCENE_VERSION = "20261001-0409";
+
+// TODO(kaush): swap in your Steam profile link.
+const STEAM_URL = "https://store.steampowered.com";
 
 const links = [
   { label: "vinskal", href: "https://vinskal.com" },
@@ -52,15 +56,15 @@ export default function Home() {
             <MorphLink href="https://illinois.edu" glyph={<UiucGlyph />}>
               uiuc
             </MorphLink>
-            . im currently architecting your experience in{" "}
+            . im currently designing and building{" "}
             <MorphLink href="https://vinskal.com" glyph={<VinskalGlyph />}>
               vinskal
             </MorphLink>
-            , the last job search platform.
+            , an incredible job search homebase software.
           </p>
           <p>
-            previously, i’ve explored multimodal interaction models and spatial
-            hallucination mitigation at{" "}
+            previously, i’ve explored multimodal interaction models and human-ai
+            interaction principles at{" "}
             <MorphLink href="https://www.yonsei.ac.kr" glyph={<YonseiGlyph />}>
               yonsei
             </MorphLink>
@@ -71,8 +75,12 @@ export default function Home() {
             .
           </p>
           <p>
-            outside of screens & design, my time goes into bouldering, hardware
-            tinkering, and clearing out my steam backlog.
+            outside of screens & design, my time’s spent climbing, hardware
+            tinkering, and late nights clearing out my{" "}
+            <MorphLink href={STEAM_URL} glyph={<SteamGlyph />}>
+              steam
+            </MorphLink>{" "}
+            backlog.
           </p>
         </div>
 

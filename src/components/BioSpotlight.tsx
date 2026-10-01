@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { createContext, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { FrameRule } from "@/components/PageFrame";
 
@@ -45,7 +45,15 @@ const DEPTHS = [
   { name: "near", motes: motes(5, 41), shift: 22 },
 ] as const;
 
+/**
+ * Whether the lamp is on. Links in the bio read it: they stay glyphs in the
+ * dark and turn into words as the light reaches them. Outside a spotlight
+ * it's always on.
+ */
+export const SpotlightContext = createContext(true);
+
 export function BioSpotlight({ children }: { children: ReactNode }) {
+  const [lit, setLit] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const leanRef = useRef<HTMLDivElement>(null);
   const dustRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -91,8 +99,13 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
     const visibility = new IntersectionObserver(
       ([entry]) => {
         const lit = section.dataset.lit === "true";
-        if (!lit && entry.intersectionRatio > 0.42) section.dataset.lit = "true";
-        else if (lit && entry.intersectionRatio < 0.1) delete section.dataset.lit;
+        if (!lit && entry.intersectionRatio > 0.42) {
+          section.dataset.lit = "true";
+          setLit(true);
+        } else if (lit && entry.intersectionRatio < 0.1) {
+          delete section.dataset.lit;
+          setLit(false);
+        }
         active = entry.isIntersecting;
         if (active) frame();
       },
@@ -135,7 +148,9 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
 
       {/* Dark until lit; once lit, it falls off with distance from the lamp.
           (Done with the text's own opacity and mask, so the light behind it is untouched.) */}
-      <div className="spot-text relative mx-auto w-full max-w-[37.8rem]">{children}</div>
+      <SpotlightContext.Provider value={lit}>
+        <div className="spot-text relative mx-auto w-full max-w-[37.8rem]">{children}</div>
+      </SpotlightContext.Provider>
 
       {/* Between: the beam and the dust in it, hanging in front of the wall. */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
