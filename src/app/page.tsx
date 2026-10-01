@@ -36,11 +36,11 @@ export default function Home() {
       </section>
 
       <BioSpotlight>
-        <p className="font-mono text-xs tracking-widest text-white/40">
+        <p className="font-mono text-[11px] tracking-widest text-white/40">
           LAST UPDATED: SEPTEMBER 2026 // CHAMPAIGN, IL
         </p>
 
-        <div className="mt-10 space-y-7 font-serif text-[clamp(1.4rem,2.4vw,1.75rem)] leading-[1.5] text-white/55">
+        <div className="mt-9 space-y-6 font-serif text-[clamp(1.26rem,2.16vw,1.575rem)] leading-[1.5] text-white/55">
           <p>
             im a senior studying brain & cognitive science with cs & informatics
             at{" "}
@@ -71,7 +71,7 @@ export default function Home() {
           </p>
         </div>
 
-        <nav aria-label="Links" className="mt-14">
+        <nav aria-label="Links" className="mt-12">
           <ul className="flex flex-wrap gap-2">
             {links.map((link) => (
               <li key={link.label}>
@@ -79,7 +79,7 @@ export default function Home() {
                   href={link.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-11 items-center rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 font-mono text-xs text-white/70 transition-all hover:border-white/30 hover:bg-white/[0.05] hover:text-white focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-white/60 active:scale-[0.98] md:min-h-0"
+                  className="inline-flex min-h-11 items-center rounded-full border border-white/[0.08] bg-white/[0.02] px-2.5 py-1 font-mono text-[11px] text-white/70 transition-all hover:border-white/30 hover:bg-white/[0.05] hover:text-white focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-white/60 active:scale-[0.98] md:min-h-0"
                 >
                   [{link.label}]
                 </a>
