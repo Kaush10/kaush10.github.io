@@ -466,9 +466,9 @@ body {
      with no rim, so it reads as lit ground seen at a low angle. */
   background: radial-gradient(
     closest-side,
-    rgb(255 255 255 / 0.075),
-    rgb(255 255 255 / 0.04) 40%,
-    rgb(255 255 255 / 0.014) 70%,
+    rgb(255 255 255 / 0.04),
+    rgb(255 255 255 / 0.022) 40%,
+    rgb(255 255 255 / 0.008) 70%,
     transparent
   );
   opacity: 0;

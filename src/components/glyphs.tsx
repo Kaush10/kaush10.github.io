@@ -143,68 +143,84 @@ export function IndustrialGlyph() {
   );
 }
 
-/** Stevenson's block S, with its banner of three stars across the middle. */
+/** Stevenson's collegiate block S, with its banner of three stars across the middle. */
 export function StevensonGlyph() {
   const id = useId();
+  const banner =
+    "M0.6 12.6C5 11 8.6 14.6 12 13.6S19 10.6 23.4 11.6V16.6C19 15.6 15.4 18.4 12 18.6S5 16 0.6 17.6Z";
+  const stars =
+    "M6 14.5l.5 1.15 1.25.1-.95.82.3 1.22-1.1-.66-1.08.66.29-1.22-.95-.82 1.25-.1zM12 14.7l.5 1.15 1.25.1-.95.82.3 1.22-1.1-.66-1.08.66.29-1.22-.95-.82 1.25-.1zM18 13.3l.5 1.15 1.25.1-.95.82.3 1.22-1.1-.66-1.08.66.29-1.22-.95-.82 1.25-.1z";
   return (
     <Mark viewBox="0 0 24 28" label="Adlai E. Stevenson High School">
       <mask id={id}>
         <rect width="24" height="28" fill="#fff" />
-        {/* the banner's band cuts through the S */}
-        <path fill="#000" d="M0 12.6C5 10.8 8 15.4 12 14.2S19 10.6 24 12.4V17.2C19 15.4 16 19 12 19.4S5 15.6 0 17.4Z" />
+        {/* the stars are holes, through the banner and the S behind it */}
+        <path d={stars} fill="#000" />
       </mask>
-      <path
-        mask={`url(#${id})`}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="5.2"
-        strokeLinejoin="bevel"
-        d="M19.4 8.6V3.9H4.6V13.6H19.4V24.1H4.6V19.4"
-      />
-      {/* the banner, dim, and its stars */}
-      <path opacity={0.45} d="M1 13.4C5.5 11.8 8.5 15.9 12 14.9S18.5 11.7 23 13.2V16.6C18.5 15.1 15.5 18.3 12 18.6S5.5 15.3 1 16.8Z" />
-      <path d="M6.4 14.1l.47 1.1 1.18.1-.9.78.28 1.16-1.03-.62-1.02.62.27-1.16-.9-.78 1.18-.1zM12 14.9l.47 1.1 1.18.1-.9.78.28 1.16-1.03-.62-1.02.62.27-1.16-.9-.78 1.18-.1zM17.6 13.9l.47 1.1 1.18.1-.9.78.28 1.16-1.03-.62-1.02.62.27-1.16-.9-.78 1.18-.1z" />
+      <g mask={`url(#${id})`}>
+        {/* the S, with the banner's band taken out of it */}
+        <mask id={`${id}-s`}>
+          <rect width="24" height="28" fill="#fff" />
+          <path d={banner} fill="#000" />
+        </mask>
+        <path
+          mask={`url(#${id}-s)`}
+          d="M5.5 0.5H18.5L21 3V9H16V5.5H8V11.5H18.5L21 14V25L18.5 27.5H5.5L3 25V19H8V22.5H16V16.5H5.5L3 14V3Z"
+        />
+        <path opacity={0.45} d={banner} />
+      </g>
     </Mark>
   );
 }
 
-/** R&R Custom Homes: the roof and dormer over "R&R", on its double rule. */
+/** R&R Custom Homes: a hip roof with a gabled dormer over "R&R", on a double rule. */
 export function RRGlyph() {
+  const id = useId();
   return (
-    <Mark viewBox="0 0 42 30" label="R&R Custom Homes">
-      {/* roof, with the dormer's gable rising through it */}
-      <path d="M3 11.2 9.6 5.6H16.4L21 1.6 25.6 5.6H32.4L39 11.2H24.2V7.6L21 4.8 17.8 7.6V11.2Z" />
-      <path opacity={0.45} d="M19.9 7.4h2.2v2.6h-2.2Z" />
+    <Mark viewBox="0 0 44 30" label="R&R Custom Homes">
+      <mask id={id}>
+        <path fill="#fff" d="M1.5 11.4 10 4.8H34L42.5 11.4Z" />
+        {/* the dormer's face, open in the roof */}
+        <path fill="#000" d="M18.2 11.4V6.2L22 3 25.8 6.2V11.4Z" />
+      </mask>
+      <rect width="44" height="12" mask={`url(#${id})`} />
+      {/* the dormer's gable, and its arched window */}
+      <path fill="none" stroke="currentColor" strokeWidth="1.5" d="M16.3 7 22 1.6 27.7 7" />
+      <path d="M21 10.4V8.1A1 1 0 0 1 23 8.1V10.4Z" />
       <text
-        x="21"
-        y="25"
+        x="22"
+        y="25.6"
         textAnchor="middle"
         fontFamily="Georgia, 'Times New Roman', serif"
         fontWeight={700}
-        fontSize="15.5"
-        textLength="36"
+        fontSize="16"
+        textLength="38"
         lengthAdjust="spacingAndGlyphs"
       >
         R&amp;R
       </text>
-      <rect x="2.5" y="26.4" width="37" height="1.5" />
-      <rect x="2.5" y="28.6" width="37" height="0.8" />
+      <rect x="1.5" y="27" width="41" height="1.4" />
+      <rect x="1.5" y="29.1" width="41" height="0.7" />
     </Mark>
   );
 }
 
-/** HFES: a figure (head and open arms) cut out of a disc. */
+/**
+ * HFES: a figure cut out of a disc. The head sits in the top segment; a
+ * smooth curve of open arms and a line down from them part the disc into
+ * the cup and two leaves.
+ */
 export function HfesGlyph() {
   const id = useId();
   return (
     <Mark viewBox="0 0 24 24" label="Human Factors and Ergonomics Society">
       <mask id={id}>
-        <circle cx="12" cy="12" r="10.5" fill="#fff" />
-        <g fill="none" stroke="#000" strokeWidth="1.9" strokeLinecap="round">
-          <path d="M1.8 9.6C6 10.2 9.4 12 12 15.2 14.6 12 18 10.2 22.2 9.6" />
-          <path d="M12 15.2V23" />
+        <circle cx="12" cy="12" r="11" fill="#fff" />
+        <g fill="none" stroke="#000" strokeWidth="1.7">
+          <path d="M0.6 9.2Q12 20.2 23.4 9.2" />
+          <path d="M12 14.7V23.5" />
         </g>
-        <circle cx="12" cy="6.6" r="2.5" fill="#000" />
+        <circle cx="12" cy="6.7" r="2.7" fill="#000" />
       </mask>
       <rect width="24" height="24" mask={`url(#${id})`} />
     </Mark>

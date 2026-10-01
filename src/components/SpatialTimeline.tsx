@@ -150,54 +150,70 @@ const sideClasses = {
   },
 } as const;
 
+/** The organisation's mark, set inline in the title so the text wraps around it. */
+function TitleMark({
+  glyph,
+  className = "",
+}: {
+  glyph: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={`inline-flex h-[1lh] items-center align-top text-white ${className}`}
+    >
+      {glyph}
+    </span>
+  );
+}
+
 function RoleBody({ role, side }: { role: Role; side: Side }) {
   return (
-    // The mark sits on the spine's side: left of the entry on phones and for
-    // right-hand entries, right of it for left-hand ones on desktop. It's one
-    // line tall, level with the title line.
-    <div
-      className={`group flex items-start gap-4 ${side === "left" ? "md:flex-row-reverse" : ""}`}
-    >
-      {role.glyph && (
-        <span
-          aria-hidden
-          className="mt-6 flex h-[1.375rem] w-9 shrink-0 items-center justify-center text-[17px] text-white"
-        >
-          {role.glyph}
-        </span>
-      )}
-      <div className="min-w-0 flex-1">
-        <p className="font-mono text-xs tracking-wider text-muted uppercase">
-          {role.period}
-        </p>
-        <h3 className="mt-2 text-base leading-snug font-medium text-foreground">
-          {role.title}{" "}
-          <span className="text-muted transition-colors duration-500 group-hover:text-foreground/80">
-            @ {role.org}
-          </span>
-        </h3>
-        <p
-          className={`mt-2 max-w-sm text-sm leading-relaxed text-muted ${side === "left" ? "md:ml-auto" : ""}`}
-        >
-          {role.summary}
-        </p>
-        {role.stack && (
-          <ul
-            className={`mt-3 flex flex-wrap gap-x-2 gap-y-1 font-mono text-[11px] tracking-wide text-white/40 ${side === "left" ? "md:justify-end" : ""}`}
-          >
-            {role.stack.map((item, i) => (
-              <li key={item}>
-                {i > 0 && (
-                  <span aria-hidden className="mr-2 text-faint">
-                    ·
-                  </span>
-                )}
-                {item}
-              </li>
-            ))}
-          </ul>
+    <div className="group">
+      <p className="font-mono text-xs tracking-wider text-muted uppercase">
+        {role.period}
+      </p>
+      <h3 className="mt-2 text-base leading-snug font-medium text-foreground">
+        {/* On the spine's side of the first line: leading the title, or for
+            left-hand entries on desktop (right-aligned), floated to the first
+            line's right end. */}
+        {role.glyph && (
+          <TitleMark
+            glyph={role.glyph}
+            className={
+              side === "left"
+                ? "mr-2.5 md:float-right md:mr-0 md:ml-2.5"
+                : "mr-2.5"
+            }
+          />
         )}
-      </div>
+        {role.title}{" "}
+        <span className="text-muted transition-colors duration-500 group-hover:text-foreground/80">
+          @ {role.org}
+        </span>
+      </h3>
+      <p
+        className={`mt-2 max-w-sm text-sm leading-relaxed text-muted ${side === "left" ? "md:ml-auto" : ""}`}
+      >
+        {role.summary}
+      </p>
+      {role.stack && (
+        <ul
+          className={`mt-3 flex flex-wrap gap-x-2 gap-y-1 font-mono text-[11px] tracking-wide text-white/40 ${side === "left" ? "md:justify-end" : ""}`}
+        >
+          {role.stack.map((item, i) => (
+            <li key={item}>
+              {i > 0 && (
+                <span aria-hidden className="mr-2 text-faint">
+                  ·
+                </span>
+              )}
+              {item}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

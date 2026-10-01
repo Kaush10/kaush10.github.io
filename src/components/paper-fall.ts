@@ -137,7 +137,7 @@ function paperTexture(anisotropy: number) {
   canvas.width = W;
   canvas.height = H;
   const c = canvas.getContext("2d")!;
-  c.fillStyle = "#cbc8c0";
+  c.fillStyle = "#a9a59d";
   c.fillRect(0, 0, W, H);
   const m = W * 0.1;
   const bar = (x: number, y: number, w: number, h: number, shade: number) => {
@@ -198,7 +198,7 @@ function paperTexture(anisotropy: number) {
   const edge = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.hypot(W, H) * 0.55);
   // Edges a shade lighter, like a drawn sheet catching the light, not a rendered one.
   edge.addColorStop(0, "rgb(255 255 255 / 0)");
-  edge.addColorStop(1, "rgb(245 242 236 / 0.3)");
+  edge.addColorStop(1, "rgb(200 196 188 / 0.25)");
   c.fillStyle = edge;
   c.fillRect(0, 0, W, H);
 
@@ -231,7 +231,7 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
 
   // The spotlight, straight down from above with a soft edge, and only a trace of room light.
-  const spot = new THREE.SpotLight("#fff6ea", 30, 20, 0.36, 0.85, 1.4);
+  const spot = new THREE.SpotLight("#fff2e2", 22, 20, 0.36, 0.85, 1.4);
   spot.position.set(0, 7.5, 0.15);
   spot.target.position.set(0, 0, 0);
   spot.castShadow = true;
@@ -267,7 +267,7 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
     // illustration: the bends still read, without a rendered falloff.
     emissive: "#ffffff",
     emissiveMap: texture,
-    emissiveIntensity: 0.38,
+    emissiveIntensity: 0.2,
   });
   const sheet = new THREE.Mesh(geometry, material);
   sheet.castShadow = true;
