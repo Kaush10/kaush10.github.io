@@ -21,9 +21,20 @@ function Glyph({ children }: { children: ReactNode }) {
   );
 }
 
-function Mark({ viewBox, label, children }: { viewBox: string; label: string; children: ReactNode }) {
+function Mark({
+  viewBox,
+  label,
+  height = "1.15em",
+  children,
+}: {
+  viewBox: string;
+  label: string;
+  /** Solid marks carry more weight than line glyphs, so some are drawn a little smaller. */
+  height?: string;
+  children: ReactNode;
+}) {
   return (
-    <svg viewBox={viewBox} fill="currentColor" role="img" aria-label={label} className="h-[1.15em] w-auto">
+    <svg viewBox={viewBox} fill="currentColor" role="img" aria-label={label} style={{ height }} className="block w-auto">
       {children}
     </svg>
   );
@@ -77,23 +88,16 @@ export function YonseiGlyph() {
   );
 }
 
-/** MetalTek's wordmark: "Metal" heavy and solid, "Tek" dim, on its rule. */
+/** MetalTek's MT mark: a heavy notched M, a lighter T, and the bar beneath. */
 export function MetalTekGlyph() {
   return (
-    <Mark viewBox="0 0 92 24" label="MetalTek International">
-      <text
-        x="0"
-        y="17"
-        fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
-        fontWeight={900}
-        fontSize="19"
-        letterSpacing="-1.2"
-        textLength="91"
-        lengthAdjust="spacingAndGlyphs"
-      >
-        Metal<tspan opacity={0.45}>Tek</tspan>
-      </text>
-      <rect x="0" y="19.6" width="91" height="2.4" />
+    <Mark viewBox="0 0 32 18" label="MetalTek International" height="0.78em">
+      <path
+        fillRule="evenodd"
+        d="M1 0H7.6V4H10.4V0H17A1 1 0 0 1 18 1V10H14V4.6L12.2 4H12V10H6V4H5.8L4 4.6V10H0V1A1 1 0 0 1 1 0Z"
+      />
+      <path opacity={0.45} d="M20 0H31V2.4H27.6V10H23.4V2.4H20Z" />
+      <path d="M0 12H32V18H0Z" />
     </Mark>
   );
 }
@@ -130,10 +134,11 @@ export function DeublinGlyph() {
 /** The three industrial companies side by side, for the "industrial environments" link. */
 export function IndustrialGlyph() {
   return (
-    <span className="inline-flex items-center gap-[0.45em]">
-      <MetalTekGlyph />
+    // A flex row, not inline-flex: inline layout would add line spacing under it and lift the row.
+    <span className="flex items-center gap-[0.45em]">
       <HoerbigerGlyph />
       <DeublinGlyph />
+      <MetalTekGlyph />
     </span>
   );
 }
@@ -141,7 +146,7 @@ export function IndustrialGlyph() {
 /** Steam's logo (the valve-and-piston mark). */
 export function SteamGlyph() {
   return (
-    <Mark viewBox="0 0 24 24" label="Steam">
+    <Mark viewBox="0 0 24 24" label="Steam" height="0.98em">
       <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z" />
     </Mark>
   );
