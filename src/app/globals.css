@@ -346,7 +346,7 @@ body {
 .recess-walls {
   position: absolute;
   inset: 0;
-  filter: blur(22px);
+  filter: blur(14px);
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -358,17 +358,24 @@ body {
   position: absolute;
   inset: 0;
 }
+/* Side walls: lit by spill from the lamp, so dark up under the ceiling,
+   softest light through the middle, and falling dark again into the bottom
+   corner (where floor, wall and panel meet). They also fade out toward the
+   frame's rail, so no band of light runs along the outer edge. */
 .recess-left,
 .recess-right {
   background: linear-gradient(
     to bottom,
-    transparent 10%,
-    rgb(255 255 255 / 0.01) 45%,
-    rgb(255 255 255 / 0.026) 100%
+    transparent 12%,
+    rgb(255 255 255 / 0.012) 32%,
+    rgb(255 255 255 / 0.022) 58%,
+    rgb(255 255 255 / 0.012) 82%,
+    transparent 100%
   );
 }
 .recess-left {
   clip-path: polygon(0 0, var(--d) var(--d), var(--d) calc(100% - var(--d)), 0 100%);
+  mask-image: linear-gradient(to right, transparent, #000 calc(var(--d) * 0.85));
 }
 .recess-right {
   clip-path: polygon(
@@ -377,7 +384,10 @@ body {
     calc(100% - var(--d)) calc(100% - var(--d)),
     calc(100% - var(--d)) var(--d)
   );
+  mask-image: linear-gradient(to left, transparent, #000 calc(var(--d) * 0.85));
 }
+/* Floor: lit where the light comes down the back panel, centred under the
+   lamp and fading well before the corners. */
 .recess-floor {
   clip-path: polygon(
     var(--d) calc(100% - var(--d)),
@@ -386,10 +396,10 @@ body {
     0 100%
   );
   background: radial-gradient(
-    ellipse 45% 110% at 50% calc(100% - var(--d)),
-    rgb(255 255 255 / 0.04),
-    rgb(255 255 255 / 0.014) 55%,
-    transparent 85%
+    ellipse 30% calc(var(--d) * 1.15) at 50% calc(100% - var(--d)),
+    rgb(255 255 255 / 0.035),
+    rgb(255 255 255 / 0.012) 55%,
+    transparent 100%
   );
 }
 .recess-panel {
