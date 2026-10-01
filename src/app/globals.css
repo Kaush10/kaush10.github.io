@@ -314,36 +314,17 @@ body {
   transition: opacity 1.6s ease 0.7s;
 }
 
-/* Text: dark until lit, then only its edges stay a little dim. Both layers
-   have feathered edges so they never draw a line across the light. */
-.spot-dark,
-.spot-falloff {
-  background: #000;
-  mask-composite: intersect;
-}
-.spot-dark {
-  opacity: 0.82;
-  mask-image:
-    linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent),
-    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+/* Text: dim until lit, then lit by the lamp: brightest at the top centre,
+   falling off down and out. Opacity and a static mask on the text itself,
+   so nothing darkens the light behind it. */
+.spot-text {
+  opacity: 0.2;
+  mask-image: radial-gradient(ellipse 75% 125% at 50% -15%, #000 45%, rgb(0 0 0 / 0.55) 100%);
   transition: opacity 0.5s ease;
 }
-.spot[data-lit] .spot-dark {
-  /* Lit, but not all the way: the bio stays a little under full brightness. */
-  opacity: 0.3;
-  transition: opacity 1.4s ease 0.7s;
-}
-.spot-falloff {
-  opacity: 0;
-  mask-image:
-    radial-gradient(ellipse 64% 72% at 50% 32%, transparent 48%, #000 100%),
-    linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent),
-    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-  transition: opacity 0.5s ease;
-}
-.spot[data-lit] .spot-falloff {
-  opacity: 0.6;
-  transition: opacity 1.4s ease 0.7s;
+.spot[data-lit] .spot-text {
+  opacity: 0.9;
+  transition: opacity 1.6s ease 0.7s;
 }
 
 /* ---- Recess: the bio's page is pressed a few inches into the frame ----
@@ -416,6 +397,48 @@ body {
   inset: var(--d);
 }
 
+/* ---- Niche variant (board): a wall-washer instead of a beam ------------
+ * The lamp on the rim grazes the back wall, so the light is a scallop: a
+ * bright spot right under the lamp spreading down and out, with no cone in
+ * the air. The text is lit by that wash and falls off with it. */
+.spot-scallop {
+  /* Reaches up past the panel to the rim, so the light starts at the lamp. */
+  position: absolute;
+  top: calc(-1 * var(--d));
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  display: none;
+}
+.spot[data-variant="niche"] .spot-scallop {
+  display: block;
+  background:
+    radial-gradient(ellipse 10% 9% at 50% 0%, rgb(255 255 255 / 0.09), transparent),
+    radial-gradient(
+      ellipse 34% 88% at 50% 0%,
+      rgb(255 255 255 / 0.085),
+      rgb(255 255 255 / 0.035) 45%,
+      rgb(255 255 255 / 0.01) 70%,
+      transparent 88%
+    );
+  transition: opacity 0.5s ease;
+}
+.spot[data-variant="niche"][data-lit] .spot-scallop {
+  opacity: 1;
+  transition: opacity 1.6s ease 0.35s;
+}
+.spot[data-variant="niche"] .spot-wash { display: none; }
+.spot[data-variant="niche"] .spot-beam { visibility: hidden; }
+.spot[data-variant="niche"] .spot-grain {
+  top: calc(-1 * var(--d));
+  mask-image: radial-gradient(
+    ellipse 30% 80% at 50% 0%,
+    rgb(0 0 0 / 0.6),
+    rgb(0 0 0 / 0.25) 50%,
+    transparent 85%
+  );
+}
 @media (prefers-reduced-motion: reduce) {
   .spot *,
   .spot[data-lit] * {

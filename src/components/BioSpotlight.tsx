@@ -57,6 +57,10 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
     const lean = leanRef.current;
     if (!section || !lean) return;
 
+    // Design board: ?spot=niche|beam picks a lighting treatment to compare.
+    const variant = new URLSearchParams(window.location.search).get("spot");
+    if (variant) section.dataset.variant = variant;
+
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let active = false;
     const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -133,16 +137,14 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
         </div>
         <div className="recess-panel">
           <div className="spot-wash" />
+          <div className="spot-scallop" />
           <div className="spot-grain" />
         </div>
       </div>
 
-      <div className="relative mx-auto w-full max-w-[37.8rem]">
-        {children}
-        {/* Dark until lit; once lit, it falls off with distance from the lamp. */}
-        <div aria-hidden className="spot-dark pointer-events-none absolute -inset-x-[12%] -inset-y-[16%]" />
-        <div aria-hidden className="spot-falloff pointer-events-none absolute -inset-x-[12%] -inset-y-[16%]" />
-      </div>
+      {/* Dark until lit; once lit, it falls off with distance from the lamp.
+          (Done with the text's own opacity and mask, so the light behind it is untouched.) */}
+      <div className="spot-text relative mx-auto w-full max-w-[37.8rem]">{children}</div>
 
       {/* Between: the beam and the dust in it, hanging in front of the wall. */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
