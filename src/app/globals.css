@@ -290,9 +290,9 @@ body {
 }
 .spot-wash {
   background: radial-gradient(
-    ellipse 46% 36% at 50% 38%,
-    rgb(255 255 255 / 0.07),
-    rgb(255 255 255 / 0.028) 50%,
+    ellipse 50% 42% at 50% 38%,
+    rgb(255 255 255 / 0.045),
+    rgb(255 255 255 / 0.02) 55%,
     transparent 100%
   );
   opacity: 0;
@@ -329,7 +329,8 @@ body {
   transition: opacity 0.5s ease;
 }
 .spot[data-lit] .spot-dark {
-  opacity: 0;
+  /* Lit, but not all the way: the bio stays a little under full brightness. */
+  opacity: 0.3;
   transition: opacity 1.4s ease 0.7s;
 }
 .spot-falloff {
@@ -359,24 +360,34 @@ body {
   right: var(--frame-x);
   height: 100%;
 }
-.recess-wall {
+/* The walls are shaped with clip-path, then their wrapper blurs them all,
+   so they read as soft, matte shading with no edge between surfaces. */
+.recess-walls {
   position: absolute;
   inset: 0;
+  filter: blur(22px);
   opacity: 0;
   transition: opacity 0.5s ease;
 }
-.spot[data-lit] .recess-wall {
+.spot[data-lit] .recess-walls {
   opacity: 1;
-  transition: opacity 1.8s ease 0.5s;
+  transition: opacity 2s ease 0.5s;
+}
+.recess-wall {
+  position: absolute;
+  inset: 0;
+}
+.recess-left,
+.recess-right {
+  background: linear-gradient(
+    to bottom,
+    transparent 10%,
+    rgb(255 255 255 / 0.01) 45%,
+    rgb(255 255 255 / 0.026) 100%
+  );
 }
 .recess-left {
   clip-path: polygon(0 0, var(--d) var(--d), var(--d) calc(100% - var(--d)), 0 100%);
-  background: linear-gradient(
-    to bottom,
-    transparent 8%,
-    rgb(255 255 255 / 0.018) 45%,
-    rgb(255 255 255 / 0.045) 100%
-  );
 }
 .recess-right {
   clip-path: polygon(
@@ -384,12 +395,6 @@ body {
     100% 100%,
     calc(100% - var(--d)) calc(100% - var(--d)),
     calc(100% - var(--d)) var(--d)
-  );
-  background: linear-gradient(
-    to bottom,
-    transparent 8%,
-    rgb(255 255 255 / 0.018) 45%,
-    rgb(255 255 255 / 0.045) 100%
   );
 }
 .recess-floor {
@@ -400,53 +405,15 @@ body {
     0 100%
   );
   background: radial-gradient(
-    ellipse 42% 100% at 50% calc(100% - var(--d)),
-    rgb(255 255 255 / 0.075),
-    rgb(255 255 255 / 0.025) 55%,
+    ellipse 45% 110% at 50% calc(100% - var(--d)),
+    rgb(255 255 255 / 0.04),
+    rgb(255 255 255 / 0.014) 55%,
     transparent 85%
   );
 }
 .recess-panel {
   position: absolute;
   inset: var(--d);
-  overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 0.03);
-  transition: border-color 0.5s ease;
-}
-.spot[data-lit] .recess-panel {
-  /* The panel's edges: dark under the ceiling, catching light at the floor. */
-  border-color: rgb(255 255 255 / 0.03) rgb(255 255 255 / 0.055) rgb(255 255 255 / 0.1);
-  transition: border-color 1.8s ease 0.5s;
-}
-.recess-seam {
-  position: absolute;
-  width: calc(var(--d) * 1.4142);
-  height: 1px;
-  opacity: 0.35;
-  transition: opacity 0.5s ease;
-}
-.spot[data-lit] .recess-seam {
-  opacity: 1;
-  transition: opacity 1.8s ease 0.5s;
-}
-.recess-seam-tl,
-.recess-seam-tr {
-  top: 0;
-  background: rgb(255 255 255 / 0.05);
-}
-.recess-seam-bl,
-.recess-seam-br {
-  bottom: 0;
-  background: linear-gradient(to right, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.12));
-}
-.recess-seam-tl { left: 0; transform-origin: 0 50%; transform: rotate(45deg); }
-.recess-seam-tr { right: 0; transform-origin: 100% 50%; transform: rotate(-45deg); }
-.recess-seam-bl { left: 0; transform-origin: 0 50%; transform: rotate(-45deg); }
-.recess-seam-br {
-  right: 0;
-  transform-origin: 100% 50%;
-  transform: rotate(45deg);
-  background: linear-gradient(to left, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.12));
 }
 
 @media (prefers-reduced-motion: reduce) {

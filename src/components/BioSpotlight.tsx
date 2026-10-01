@@ -8,9 +8,10 @@ import { FrameRule } from "@/components/PageFrame";
 // (the same dot the hero has) warms up like a lamp and lights the page.
 //
 // The section is a recess pressed a few inches into the frame, and the lamp
-// on its top rim lights the inside: the floor and lower walls catch the light,
-// the ceiling stays dark, the seams show where the light reaches, and a pool
-// lands on the back panel brightest near its top, closest to the lamp. You
+// on its top rim lights the inside. Every surface is matte: no lines or
+// highlights, only soft shading. The floor and lower walls catch diffuse
+// light, the ceiling stays dark, and a pool lands on the back panel brightest
+// near its top, closest to the lamp. You
 // read the bio through the beam, which hangs in the air in front of it. Dust
 // drifts at three depths: far specks small and sharp, near ones big and soft.
 //
@@ -125,17 +126,15 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
           run from the frame's edge back to a panel the bio sits on; the lamp on
           the top rim lights the floor and lower walls and leaves the ceiling dark. */}
       <div aria-hidden className="recess pointer-events-none">
-        <div className="recess-wall recess-left" />
-        <div className="recess-wall recess-right" />
-        <div className="recess-wall recess-floor" />
+        <div className="recess-walls">
+          <div className="recess-wall recess-left" />
+          <div className="recess-wall recess-right" />
+          <div className="recess-wall recess-floor" />
+        </div>
         <div className="recess-panel">
           <div className="spot-wash" />
           <div className="spot-grain" />
         </div>
-        <span className="recess-seam recess-seam-tl" />
-        <span className="recess-seam recess-seam-tr" />
-        <span className="recess-seam recess-seam-bl" />
-        <span className="recess-seam recess-seam-br" />
       </div>
 
       <div className="relative mx-auto w-full max-w-[37.8rem]">
@@ -177,7 +176,7 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
       </div>
 
       {/* Front: the frame's rule and the lamp on it. */}
-      <FrameRule index="01" label="about" glint>
+      <FrameRule index="01" label="about">
         <span className="spot-lamp relative block size-[calc(var(--frame-dot)*0.62)] rounded-full">
           <span className="spot-filament absolute inset-0 rounded-full" />
         </span>
