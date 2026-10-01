@@ -22,7 +22,7 @@ export function FrameRails() {
     <motion.div
       aria-hidden
       style={{ opacity }}
-      className="pointer-events-none absolute inset-x-0 top-[100dvh] bottom-[var(--frame-top)]"
+      className="pointer-events-none absolute inset-x-0 top-[100svh] bottom-[var(--frame-top)]"
     >
       <span className="absolute inset-y-0 left-[var(--frame-x)] w-px bg-[var(--frame-line)]" />
       <span className="absolute inset-y-0 right-[var(--frame-x)] w-px bg-[var(--frame-line)]" />

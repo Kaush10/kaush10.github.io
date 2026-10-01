@@ -39,7 +39,7 @@ export default function Home() {
     <main className="relative flex flex-1 flex-col bg-background">
       <FrameRails />
 
-      <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-black select-none">
+      <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-black select-none">
         <UnicornHero projectId={`${HERO_SCENE}?update=${HERO_SCENE_VERSION}`} />
 
         <div
@@ -116,7 +116,7 @@ export default function Home() {
       </div>
 
       {/* The frame closes here, with a dim dot answering the hero's. */}
-      <footer className="relative h-[22dvh]">
+      <footer className="relative h-[22svh]">
         <FrameRule
           index="end"
           label={`© ${new Date().getFullYear()}`}

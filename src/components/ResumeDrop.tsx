@@ -141,7 +141,7 @@ export function ResumeDrop({ href }: { href: string }) {
   return (
     <div
       ref={stageRef}
-      className={`resume-drop relative h-[56dvh] min-h-[24rem] w-full ${lit ? "is-lit" : ""}`}
+      className={`resume-drop relative h-[56svh] min-h-[24rem] w-full ${lit ? "is-lit" : ""}`}
     >
       {pool && (
         <>

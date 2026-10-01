@@ -125,7 +125,7 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
     <section
       ref={sectionRef}
       id="about"
-      className="spot relative flex min-h-[100dvh] scroll-mt-0 flex-col items-center justify-center px-12 pt-[calc(8rem+2*var(--frame-top))] pb-32 md:px-6"
+      className="spot relative flex min-h-[100svh] scroll-mt-0 flex-col items-center justify-center px-12 pt-[calc(8rem+2*var(--frame-top))] pb-32 md:px-6"
     >
       {/* The panel the bio sits on, set in from the frame; the light lands on it. */}
       <div aria-hidden className="recess pointer-events-none">

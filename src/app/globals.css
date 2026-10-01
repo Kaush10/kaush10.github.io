@@ -11,9 +11,9 @@
   /* The page frame continues the one drawn in the hero scene: rails 4.92% in
      from each side, a header rule 7.1% down each page. */
   --frame-x: 4.92%;
-  --frame-top: 7.1dvh;
+  --frame-top: 7.1svh;
   --frame-line: rgb(255 255 255 / 0.14);
-  --frame-dot: clamp(16px, 3.4dvh, 36px);
+  --frame-dot: clamp(16px, 3.4svh, 36px);
 }
 
 @theme inline {
