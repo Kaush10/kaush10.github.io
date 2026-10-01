@@ -7,13 +7,11 @@ import { FrameRule } from "@/components/PageFrame";
 // The bio sits in the dark until you reach it. Then the dot on its header rule
 // (the same dot the hero has) warms up like a lamp and lights the page.
 //
-// The section is a recess pressed a few inches into the frame, and the lamp
-// on its top rim lights the inside. Every surface is matte: no lines or
-// highlights, only soft shading. The floor and lower walls catch diffuse
-// light, the ceiling stays dark, and a pool lands on the back panel brightest
-// near its top, closest to the lamp. You
-// read the bio through the beam, which hangs in the air in front of it. Dust
-// drifts at three depths: far specks small and sharp, near ones big and soft.
+// The bio sits on a panel set into the frame, and the lamp on the rule above
+// lights it: a pool lands on the panel brightest near its top, closest to
+// the lamp, the panel's grain shows only where it falls, and the text is lit
+// the same way. You read it through the beam, which hangs in the air in front.
+// Dust drifts at three depths: far specks small and sharp, near ones big and soft.
 //
 // The text itself never moves. Everything animates opacity and transform only
 // (see `.spot` and `.recess` in globals.css); JS switches the light and leans
@@ -126,24 +124,8 @@ export function BioSpotlight({ children }: { children: ReactNode }) {
       id="about"
       className="spot relative flex min-h-[100dvh] scroll-mt-0 flex-col items-center justify-center px-12 pt-[calc(8rem+2*var(--frame-top))] pb-32 md:px-6"
     >
-      {/* The recess: the page is set a few inches into the frame here. Its walls
-          run from the frame's edge back to a panel the bio sits on; the lamp on
-          the top rim lights the floor and lower walls and leaves the ceiling dark. */}
+      {/* The panel the bio sits on, set in from the frame; the light lands on it. */}
       <div aria-hidden className="recess pointer-events-none">
-        <div className="recess-walls">
-          <div className="recess-wall recess-left" />
-          <div className="recess-wall recess-right" />
-          <div className="recess-wall recess-floor" />
-        </div>
-        {/* Faint, softened hints of the recess's shape: the panel's outline and
-            the seams where the walls meet, fading out toward the frame. */}
-        <div className="recess-edges">
-          <div className="recess-outline" />
-          <span className="recess-seam recess-seam-tl" />
-          <span className="recess-seam recess-seam-tr" />
-          <span className="recess-seam recess-seam-bl" />
-          <span className="recess-seam recess-seam-br" />
-        </div>
         <div className="recess-panel">
           <div className="spot-wash" />
           <div className="spot-scallop" />

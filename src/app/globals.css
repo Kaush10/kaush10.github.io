@@ -327,12 +327,7 @@ body {
   transition: opacity 1.6s ease 0.7s;
 }
 
-/* ---- Recess: the bio's page is pressed a few inches into the frame ----
- * The outer edge is the frame itself (rails and rules). --d is how far in the
- * back panel sits, the same on every side since you look at it straight on,
- * which makes the corner seams 45° lines. The lamp is on the top rim, so the
- * ceiling stays dark, the side walls brighten toward the floor, and the floor
- * is brightest where it meets the panel under the beam. */
+/* ---- Recess: the panel the bio sits on, set --d in from the frame. ---- */
 .recess {
   --d: clamp(18px, 4.5vw, 72px);
   position: absolute;
@@ -341,129 +336,9 @@ body {
   right: var(--frame-x);
   height: 100%;
 }
-/* The walls are shaped with clip-path, then their wrapper blurs them all,
-   so they read as soft, matte shading with no edge between surfaces. */
-.recess-walls {
-  position: absolute;
-  inset: 0;
-  filter: blur(14px);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-.spot[data-lit] .recess-walls {
-  opacity: 1;
-  transition: opacity 2s ease 0.5s;
-}
-.recess-wall {
-  position: absolute;
-  inset: 0;
-}
-/* Side walls: lit by spill from the lamp, so dark up under the ceiling,
-   softest light through the middle, and falling dark again into the bottom
-   corner (where floor, wall and panel meet). They also fade out toward the
-   frame's rail, so no band of light runs along the outer edge. */
-.recess-left,
-.recess-right {
-  background: linear-gradient(
-    to bottom,
-    transparent 12%,
-    rgb(255 255 255 / 0.012) 32%,
-    rgb(255 255 255 / 0.022) 58%,
-    rgb(255 255 255 / 0.012) 82%,
-    transparent 100%
-  );
-}
-.recess-left {
-  clip-path: polygon(0 0, var(--d) var(--d), var(--d) calc(100% - var(--d)), 0 100%);
-  mask-image: linear-gradient(to right, transparent, #000 calc(var(--d) * 0.85));
-}
-.recess-right {
-  clip-path: polygon(
-    100% 0,
-    100% 100%,
-    calc(100% - var(--d)) calc(100% - var(--d)),
-    calc(100% - var(--d)) var(--d)
-  );
-  mask-image: linear-gradient(to left, transparent, #000 calc(var(--d) * 0.85));
-}
-/* Floor: lit where the light comes down the back panel, centred under the
-   lamp and fading well before the corners. */
-.recess-floor {
-  clip-path: polygon(
-    var(--d) calc(100% - var(--d)),
-    calc(100% - var(--d)) calc(100% - var(--d)),
-    100% 100%,
-    0 100%
-  );
-  background: radial-gradient(
-    ellipse 30% calc(var(--d) * 1.15) at 50% calc(100% - var(--d)),
-    rgb(255 255 255 / 0.035),
-    rgb(255 255 255 / 0.012) 55%,
-    transparent 100%
-  );
-}
 .recess-panel {
   position: absolute;
   inset: var(--d);
-}
-
-/* Edges: the recess's shape, barely there. Blurred a touch so nothing reads
-   as a crisp line, brighter where the light reaches (lower down), and the
-   seams fade out before they reach the frame's corners. */
-.recess-edges {
-  position: absolute;
-  inset: 0;
-  filter: blur(1.2px);
-  opacity: 0.45;
-  transition: opacity 0.5s ease;
-}
-.spot[data-lit] .recess-edges {
-  opacity: 1;
-  transition: opacity 2s ease 0.6s;
-}
-.recess-outline {
-  position: absolute;
-  inset: var(--d);
-  border: 1.5px solid;
-  border-color: rgb(255 255 255 / 0.03) rgb(255 255 255 / 0.05) rgb(255 255 255 / 0.075);
-  mask-image: radial-gradient(ellipse 75% 85% at 50% 55%, #000 35%, rgb(0 0 0 / 0.3) 100%);
-}
-.recess-seam {
-  position: absolute;
-  width: calc(var(--d) * 1.4142);
-  height: 1.5px;
-}
-.recess-seam-tl,
-.recess-seam-tr {
-  top: 0;
-}
-.recess-seam-bl,
-.recess-seam-br {
-  bottom: 0;
-}
-.recess-seam-tl {
-  left: 0;
-  transform-origin: 0 50%;
-  transform: rotate(45deg);
-  background: linear-gradient(to right, transparent 15%, rgb(255 255 255 / 0.035));
-}
-.recess-seam-tr {
-  right: 0;
-  transform-origin: 100% 50%;
-  transform: rotate(-45deg);
-  background: linear-gradient(to left, transparent 15%, rgb(255 255 255 / 0.035));
-}
-.recess-seam-bl {
-  left: 0;
-  transform-origin: 0 50%;
-  transform: rotate(-45deg);
-  background: linear-gradient(to right, transparent 15%, rgb(255 255 255 / 0.065));
-}
-.recess-seam-br {
-  right: 0;
-  transform-origin: 100% 50%;
-  transform: rotate(45deg);
-  background: linear-gradient(to left, transparent 15%, rgb(255 255 255 / 0.065));
 }
 
 /* ---- Niche variant (board): a wall-washer instead of a beam ------------
