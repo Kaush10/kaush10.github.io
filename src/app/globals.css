@@ -30,6 +30,8 @@
 
 html {
   color-scheme: dark;
+  /* Glows and light layers spill past the edges; never scroll sideways for them. */
+  overflow-x: clip;
   scroll-behavior: smooth;
   scrollbar-color: #1f2023 var(--background);
   scrollbar-width: thin;
@@ -424,8 +426,40 @@ body {
   opacity: 0;
 }
 .resume-drop.is-lit .resume-filament,
+.resume-drop.is-lit .resume-beam,
+.resume-drop.is-lit .resume-spot,
 .resume-drop.is-lit .resume-pool {
   animation: lamp-warm 0.9s linear forwards;
+}
+.resume-beam {
+  transform: translateX(-50%);
+  filter: blur(24px);
+  opacity: 0;
+}
+.resume-beam::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(48.5% 0, 51.5% 0, 100% 100%, 0 100%);
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.05),
+    rgb(255 255 255 / 0.04) 30%,
+    rgb(255 255 255 / 0.028) 80%,
+    rgb(255 255 255 / 0.012)
+  );
+}
+.resume-spot {
+  /* The spotlight's pool on the ground: evenly lit, soft rim. */
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 0.11),
+    rgb(255 255 255 / 0.09) 50%,
+    rgb(255 255 255 / 0.05) 75%,
+    rgb(255 255 255 / 0.015) 92%,
+    transparent
+  );
+  opacity: 0;
 }
 .resume-pool {
   /* Not a spotlight's pool: a soft, wide glow under the sheet that fades out
@@ -457,6 +491,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .resume-drop.is-lit .resume-filament,
+  .resume-drop.is-lit .resume-beam,
+  .resume-drop.is-lit .resume-spot,
   .resume-drop.is-lit .resume-pool {
     animation: none;
     opacity: 1;

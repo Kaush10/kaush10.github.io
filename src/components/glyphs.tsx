@@ -143,6 +143,74 @@ export function IndustrialGlyph() {
   );
 }
 
+/** Stevenson's block S, with its banner of three stars across the middle. */
+export function StevensonGlyph() {
+  const id = useId();
+  return (
+    <Mark viewBox="0 0 24 28" label="Adlai E. Stevenson High School">
+      <mask id={id}>
+        <rect width="24" height="28" fill="#fff" />
+        {/* the banner's band cuts through the S */}
+        <path fill="#000" d="M0 12.6C5 10.8 8 15.4 12 14.2S19 10.6 24 12.4V17.2C19 15.4 16 19 12 19.4S5 15.6 0 17.4Z" />
+      </mask>
+      <path
+        mask={`url(#${id})`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="5.2"
+        strokeLinejoin="bevel"
+        d="M19.4 8.6V3.9H4.6V13.6H19.4V24.1H4.6V19.4"
+      />
+      {/* the banner, dim, and its stars */}
+      <path opacity={0.45} d="M1 13.4C5.5 11.8 8.5 15.9 12 14.9S18.5 11.7 23 13.2V16.6C18.5 15.1 15.5 18.3 12 18.6S5.5 15.3 1 16.8Z" />
+      <path d="M6.4 14.1l.47 1.1 1.18.1-.9.78.28 1.16-1.03-.62-1.02.62.27-1.16-.9-.78 1.18-.1zM12 14.9l.47 1.1 1.18.1-.9.78.28 1.16-1.03-.62-1.02.62.27-1.16-.9-.78 1.18-.1zM17.6 13.9l.47 1.1 1.18.1-.9.78.28 1.16-1.03-.62-1.02.62.27-1.16-.9-.78 1.18-.1z" />
+    </Mark>
+  );
+}
+
+/** R&R Custom Homes: the roof and dormer over "R&R", on its double rule. */
+export function RRGlyph() {
+  return (
+    <Mark viewBox="0 0 42 30" label="R&R Custom Homes">
+      {/* roof, with the dormer's gable rising through it */}
+      <path d="M3 11.2 9.6 5.6H16.4L21 1.6 25.6 5.6H32.4L39 11.2H24.2V7.6L21 4.8 17.8 7.6V11.2Z" />
+      <path opacity={0.45} d="M19.9 7.4h2.2v2.6h-2.2Z" />
+      <text
+        x="21"
+        y="25"
+        textAnchor="middle"
+        fontFamily="Georgia, 'Times New Roman', serif"
+        fontWeight={700}
+        fontSize="15.5"
+        textLength="36"
+        lengthAdjust="spacingAndGlyphs"
+      >
+        R&amp;R
+      </text>
+      <rect x="2.5" y="26.4" width="37" height="1.5" />
+      <rect x="2.5" y="28.6" width="37" height="0.8" />
+    </Mark>
+  );
+}
+
+/** HFES: a figure (head and open arms) cut out of a disc. */
+export function HfesGlyph() {
+  const id = useId();
+  return (
+    <Mark viewBox="0 0 24 24" label="Human Factors and Ergonomics Society">
+      <mask id={id}>
+        <circle cx="12" cy="12" r="10.5" fill="#fff" />
+        <g fill="none" stroke="#000" strokeWidth="1.9" strokeLinecap="round">
+          <path d="M1.8 9.6C6 10.2 9.4 12 12 15.2 14.6 12 18 10.2 22.2 9.6" />
+          <path d="M12 15.2V23" />
+        </g>
+        <circle cx="12" cy="6.6" r="2.5" fill="#000" />
+      </mask>
+      <rect width="24" height="24" mask={`url(#${id})`} />
+    </Mark>
+  );
+}
+
 /** Steam's logo (the valve-and-piston mark). */
 export function SteamGlyph() {
   return (

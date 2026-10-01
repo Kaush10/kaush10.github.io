@@ -145,12 +145,24 @@ export function ResumeDrop({ href }: { href: string }) {
     >
       {pool && (
         <>
-          {/* No spotlight cone: the lamp at the spine's end just lights the
-              area, and a soft glow on the ground under the sheet shows the
-              ground's angle. */}
+          {/* Desktop: a spotlight. The beam runs from the lamp down to its
+              pool on the ground. */}
           <div
             aria-hidden
-            className="resume-pool pointer-events-none absolute"
+            className="resume-beam pointer-events-none absolute top-0 hidden md:block"
+            style={{ left: apex, width: pool.w * 0.9, height: beamHeight }}
+          />
+          <div
+            aria-hidden
+            className="resume-spot pointer-events-none absolute hidden md:block"
+            style={{ left: pool.x, top: pool.y, width: pool.w, height: pool.h }}
+          />
+          {/* Phones: the lamp stays on the spine at the left, so no cone;
+              a soft glow on the ground under the sheet shows the ground's
+              angle. */}
+          <div
+            aria-hidden
+            className="resume-pool pointer-events-none absolute md:hidden"
             style={{
               left: pool.x - pool.w * 0.35,
               top: pool.y - pool.h * 0.6,
@@ -188,11 +200,12 @@ export function ResumeDrop({ href }: { href: string }) {
         aria-hidden
         className="pointer-events-none absolute inset-0 size-full"
       />
-      {/* The lamp: the end of the timeline's spine. */}
+      {/* The lamp: the end of the timeline's spine (at the left on phones,
+          the centre on desktop). */}
       <span
         aria-hidden
-        className="resume-lamp pointer-events-none absolute top-0"
-        style={{ left: pool ? apex : "50%" }}
+        className="resume-lamp pointer-events-none absolute top-0 left-0 md:left-[var(--apex)]"
+        style={{ ["--apex" as string]: pool ? `${apex}px` : "50%" }}
       >
         <span className="resume-filament" />
       </span>
