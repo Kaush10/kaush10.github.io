@@ -39,12 +39,15 @@ export function FrameRule({
   index,
   label,
   position = "top",
+  glint = false,
   children,
 }: {
   index: string;
   label: string;
   /** `top`: a header, 7.1% down the section. `bottom`: the closing rule, 7.1% up from its end. */
   position?: "top" | "bottom";
+  /** A highlight along the rule either side of centre, shown when a parent `.spot` is lit. */
+  glint?: boolean;
   children?: ReactNode;
 }) {
   const reduceMotion = useReducedMotion();
@@ -59,6 +62,7 @@ export function FrameRule({
         transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
         className="absolute inset-0 bg-[var(--frame-line)]"
       />
+      {glint && <span className="spot-glint" />}
       <div className="absolute top-3 left-3 font-mono text-[10px] tracking-[0.2em] text-white/25 uppercase">
         {index}
       </div>

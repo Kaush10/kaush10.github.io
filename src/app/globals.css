@@ -125,31 +125,211 @@ body {
   opacity: 0.045;
 }
 
-/* The bio's lamp: a dark bulb at --lamp 0, lit and blooming at 1. */
-.lamp {
-  --lamp: 0;
-  background: rgb(calc(24 + 218 * var(--lamp)) calc(24 + 218 * var(--lamp)) calc(26 + 216 * var(--lamp)));
-  box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / calc(0.22 - 0.22 * var(--lamp))),
-    0 0 calc(4px + 26px * var(--lamp)) calc(3px * var(--lamp)) rgb(255 255 255 / calc(0.7 * var(--lamp))),
-    0 0 calc(40px + 90px * var(--lamp)) calc(6px * var(--lamp)) rgb(255 255 255 / calc(0.22 * var(--lamp)));
+/* ---- Bio spotlight ----------------------------------------------------
+ * BioSpotlight sets data-lit on .spot when the section is in view. Every
+ * transition here is opacity or transform, so it costs nothing per frame.
+ * Order when it switches on: filament warms (0–0.9s), glint and halo come
+ * up with it, the beam unrolls (0.35s on), the text rises (0.7s on).
+ */
+
+.spot {
+  overflow-x: clip;
 }
 
-/* Darkens the bio except where the spotlight's pool is (--px, --py, --pr set from JS). */
-.spotlight-shade {
-  --px: 50%;
-  --py: 50%;
-  --pr: 0.5%;
-  /* The hole for the pool, intersected with a feather on every edge so the
-     shade never shows a hard border across the beam. */
+/* Lamp: a dark bulb with a filament that flickers on. */
+.spot-lamp {
+  background: #18181a;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+}
+.spot-filament {
+  background: #f4f4f4;
+  box-shadow: 0 0 10px 2px rgb(255 255 255 / 0.65);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.spot[data-lit] .spot-filament {
+  animation: lamp-warm 0.9s linear forwards;
+}
+@keyframes lamp-warm {
+  0% { opacity: 0; }
+  9% { opacity: 0.55; }
+  15% { opacity: 0.08; }
+  26% { opacity: 0.75; }
+  32% { opacity: 0.25; }
+  46% { opacity: 0.95; }
+  54% { opacity: 0.65; }
+  80%, 100% { opacity: 1; }
+}
+
+/* Halo round the lamp, and the rule catching the light either side of it. */
+.spot-halo {
+  position: absolute;
+  top: var(--frame-top);
+  left: 50%;
+  width: 26rem;
+  height: 26rem;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 0.14),
+    rgb(255 255 255 / 0.04) 45%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.spot[data-lit] .spot-halo {
+  animation: lamp-warm 0.9s linear forwards;
+}
+.spot-glint {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 70%;
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.55), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.spot[data-lit] .spot-glint {
+  opacity: 1;
+  transition: opacity 0.9s ease 0.3s;
+}
+
+/* Beam: a soft cone from the lamp, unrolling downward. The cone is clipped
+   to shape, then its wrapper blurs it, so the edges stay soft. */
+.spot-lean {
+  position: absolute;
+  top: var(--frame-top);
+  left: 50%;
+  width: min(72rem, 100%);
+  height: 76%;
+  transform: translateX(-50%);
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+.spot-beam {
+  position: absolute;
+  inset: 0;
+  filter: blur(28px);
+  transform: scaleY(0.3);
+  transform-origin: 50% 0;
+  opacity: 0;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+  will-change: transform, opacity;
+}
+.spot[data-lit] .spot-beam {
+  opacity: 1;
+  transform: scaleY(1);
+  transition:
+    opacity 1.3s ease 0.35s,
+    transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s;
+}
+.spot-cone {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(49.2% 0, 50.8% 0, 80% 100%, 20% 100%);
+  background:
+    radial-gradient(ellipse 22% 100% at 50% 0%, rgb(255 255 255 / 0.09), transparent 75%),
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.13),
+      rgb(255 255 255 / 0.05) 45%,
+      rgb(255 255 255 / 0.012) 85%,
+      transparent
+    );
+}
+
+/* A few specks of dust in the beam, drifting and catching the light. */
+.spot-motes {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.spot[data-lit] .spot-motes {
+  opacity: 1;
+  transition: opacity 2s ease 1s;
+}
+.spot-motes span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.7);
+  animation: mote-drift 11s ease-in-out infinite alternate;
+}
+@keyframes mote-drift {
+  0% { transform: translate(0, 0); opacity: 0.15; }
+  35% { transform: translate(7px, -12px); opacity: 0.7; }
+  70% { transform: translate(-5px, 6px); opacity: 0.3; }
+  100% { transform: translate(3px, 16px); opacity: 0.55; }
+}
+
+/* Wash: where the light lands, a faint glow behind the text. */
+.spot-wash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(62rem, 120%);
+  height: 78%;
+  transform: translate(-50%, -46%);
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 0.055),
+    rgb(255 255 255 / 0.02) 55%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.spot[data-lit] .spot-wash {
+  opacity: 1;
+  transition: opacity 1.6s ease 0.7s;
+}
+
+/* Text: dark until lit, then only its edges stay a little dim. Both layers
+   have feathered edges so they never draw a line across the light. */
+.spot-dark,
+.spot-falloff {
+  background: #000;
+  mask-composite: intersect;
+}
+.spot-dark {
+  opacity: 0.82;
   mask-image:
-    radial-gradient(
-      ellipse var(--pr) calc(var(--pr) * 1.15) at var(--px) var(--py),
-      transparent 0%,
-      transparent 55%,
-      #000 100%
-    ),
     linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent),
     linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-  mask-composite: intersect;
+  transition: opacity 0.5s ease;
+}
+.spot[data-lit] .spot-dark {
+  opacity: 0;
+  transition: opacity 1.4s ease 0.7s;
+}
+.spot-falloff {
+  opacity: 0;
+  mask-image:
+    radial-gradient(ellipse 60% 64% at 50% 46%, transparent 58%, #000 100%),
+    linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent),
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  transition: opacity 0.5s ease;
+}
+.spot[data-lit] .spot-falloff {
+  opacity: 0.55;
+  transition: opacity 1.4s ease 0.7s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spot *,
+  .spot[data-lit] * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .spot[data-lit] .spot-filament,
+  .spot[data-lit] .spot-halo {
+    opacity: 1;
+  }
 }
