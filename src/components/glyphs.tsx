@@ -1,8 +1,25 @@
 import { useId, type ReactNode } from "react";
 
-// Each place in the bio has its real mark, drawn in white. Two-tone marks keep
-// their structure as two shades: the main shape solid, the secondary one dim.
-// All are sized to the text: 1.15em tall, as wide as the mark needs.
+// Glyphs for the bio's links, in white and sized to the text (1.15em tall).
+// Line glyphs are drawn in strokes; real logos are filled, and two-tone logos
+// keep their structure as two shades, the main shape solid, the second dim.
+
+/** A square line glyph in strokes. */
+function Glyph({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="square"
+      strokeLinejoin="miter"
+      className="h-[1.15em] w-[1.15em]"
+    >
+      {children}
+    </svg>
+  );
+}
 
 function Mark({ viewBox, label, children }: { viewBox: string; label: string; children: ReactNode }) {
   return (
@@ -12,26 +29,22 @@ function Mark({ viewBox, label, children }: { viewBox: string; label: string; ch
   );
 }
 
-/** Illinois's Block I: the orange I solid, its navy outline dim. */
+/** Block I for Illinois. */
 export function UiucGlyph() {
   return (
-    <Mark viewBox="0 0 65.8 96" label="University of Illinois">
-      <path
-        opacity={0.4}
-        d="m65.805 26.539v-25.592h-65.805v25.592h14.624v43.87h-14.624v25.591h65.805v-25.592h-14.622v-43.87h14.622z"
-      />
-      <path d="m51.183 22.882h10.967v-18.279h-58.495v18.279h10.969a3.657 3.657 0 0 1 3.655 3.656v43.87a3.658 3.658 0 0 1-3.655 3.657h-10.969v18.279h58.496v-18.28h-10.968a3.657 3.657 0 0 1-3.657-3.656v-43.87a3.656 3.656 0 0 1 3.657-3.656z" />
-    </Mark>
+    <Glyph>
+      <path d="M5 3.5h14v4.5h-4.25v8H19v4.5H5V16h4.25V8H5z" />
+    </Glyph>
   );
 }
 
-/** Vinskal's mark: the V dim, the gem in its notch solid. */
+/** Nested chevrons for Vinskal. */
 export function VinskalGlyph() {
   return (
-    <Mark viewBox="-1.5 -1.5 123 98.8" label="Vinskal">
-      <path opacity={0.45} fillRule="evenodd" d="M0 0h120L71.4 95.3H48.7ZM22.7 0 60 73.2 97.3 0Z" />
-      <path d="M44.8-1h30.5L60 21.3l13.5 14.6L60 69.5 46.5 35.9 60 21.3Z" />
-    </Mark>
+    <Glyph>
+      <path d="M3 5l9 14 9-14" />
+      <path d="M8 5l4 6.25L16 5" />
+    </Glyph>
   );
 }
 
@@ -64,15 +77,64 @@ export function YonseiGlyph() {
   );
 }
 
-/** A factory for the industrial roles: saw-tooth roof, a stack, a row of windows. */
-export function IndustrialGlyph() {
+/** MetalTek's wordmark: "Metal" heavy and solid, "Tek" dim, on its rule. */
+export function MetalTekGlyph() {
   return (
-    <Mark viewBox="0 0 24 24" label="Industrial environments">
+    <Mark viewBox="0 0 92 24" label="MetalTek International">
+      <text
+        x="0"
+        y="17"
+        fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+        fontWeight={900}
+        fontSize="19"
+        letterSpacing="-1.2"
+        textLength="91"
+        lengthAdjust="spacingAndGlyphs"
+      >
+        Metal<tspan opacity={0.45}>Tek</tspan>
+      </text>
+      <rect x="0" y="19.6" width="91" height="2.4" />
+    </Mark>
+  );
+}
+
+/** HOERBIGER's mark: two raked bars standing on an open ring. */
+export function HoerbigerGlyph() {
+  return (
+    <Mark viewBox="0 0 24 24" label="HOERBIGER">
+      {/* tall bar with its foot at the top, and the short bar beside it */}
+      <path d="M10.6 3.2h3.4l-2.6 14.3H9.2l2.15-11.9H9.7Z" />
+      <path d="M15.5 8.4h2.2l-1.65 9.1h-2.2Z" />
+      {/* the ring, open at the top where the bars meet it */}
       <path
         fillRule="evenodd"
-        d="M2.5 21.5V11l5.25 3.25V11L13 14.25V11l5.25 3.25V3.5h3.25v18ZM5.5 16.75h2v2.25h-2ZM10 16.75h2v2.25h-2ZM14.5 16.75h2v2.25h-2Z"
+        d="M8.2 14.6C4.9 15.2 2.6 16.4 2.6 17.8c0 2 4.2 3.5 9.4 3.5s9.4-1.5 9.4-3.5c0-1.3-1.9-2.5-4.8-3.1l-.3 1.5c2 .5 3.2 1 3.2 1.6 0 .9-3.3 1.9-7.5 1.9s-7.5-1-7.5-1.9c0-.6 1.1-1.1 3-1.5Z"
       />
     </Mark>
+  );
+}
+
+/** Deublin's mark: an arrow through a turning ring (a rotating union). */
+export function DeublinGlyph() {
+  return (
+    <Mark viewBox="0 0 34 24" label="Deublin">
+      {/* the ring: front half solid, back half dim */}
+      <path opacity={0.45} d="M15 2.2c2.9 0 5.2 4.4 5.2 9.8s-2.3 9.8-5.2 9.8v-2.4c1.4 0 2.8-3.4 2.8-7.4S16.4 4.6 15 4.6Z" />
+      <path d="M15 2.2c-2.9 0-5.2 4.4-5.2 9.8 0 3.6 1 6.7 2.5 8.4l-1.6 1.1 4.9.9-.5-5-1.5 1c-.9-1.4-1.4-3.6-1.4-6.4 0-4 1.4-7.4 2.8-7.4Z" />
+      {/* the shaft through it */}
+      <path d="M1 11.2h26.5V8.6L33 12l-5.5 3.4v-2.6H1Z" />
+    </Mark>
+  );
+}
+
+/** The three industrial companies side by side, for the "industrial environments" link. */
+export function IndustrialGlyph() {
+  return (
+    <span className="inline-flex items-center gap-[0.45em]">
+      <MetalTekGlyph />
+      <HoerbigerGlyph />
+      <DeublinGlyph />
+    </span>
   );
 }
 
