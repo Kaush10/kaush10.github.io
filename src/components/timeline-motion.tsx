@@ -1,63 +1,51 @@
 "use client";
 
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTime,
-  useTransform,
-  useVelocity,
-} from "motion/react";
-import { useRef, type ReactNode } from "react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 
-// Each entry gets its own weight, so neighbours drift out of step with each
-// other instead of moving as one sheet.
-const WEIGHTS = [1, 0.72, 1.28, 0.86, 1.14, 0.94, 1.2, 0.8];
+import { float } from "@/components/fluid";
 
-const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
+const DESKTOP = "(min-width: 768px)";
+
+function useIsDesktop() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia(DESKTOP);
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(DESKTOP).matches,
+    () => true,
+  );
+}
 
 /**
- * Floats its children as if suspended in fluid: scrolling drags them behind
- * the page and they bob back into place; at rest they sway on their own.
+ * Floats its children in the page's fluid (see fluid.ts). Entries hang from
+ * the spine, so a left-hand entry on desktop pivots around its right edge.
  */
 export function FloatingEntry({
   index,
+  side,
   children,
-  className,
 }: {
   index: number;
+  side: "left" | "right";
   children: ReactNode;
-  className?: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const weight = WEIGHTS[index % WEIGHTS.length];
-  const phase = index * 1.9;
+  const isDesktop = useIsDesktop();
+  const anchor = side === "left" && isDesktop ? "end" : "start";
 
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const drag = useTransform(scrollVelocity, (v) => clamp(v * 0.028 * weight, 42));
-  // Underdamped, so a hard stop leaves the entry bobbing for a beat.
-  const lag = useSpring(drag, { stiffness: 64, damping: 7.5, mass: weight });
-
-  const time = useTime();
-  const y = useTransform(
-    () => lag.get() + Math.sin(time.get() / (1500 * weight) + phase) * 5 * weight,
-  );
-  const x = useTransform(time, (t) => Math.cos(t / (2300 * weight) + phase) * 3);
-  const rotate = useTransform(
-    () =>
-      clamp(lag.get() * 0.02, 1.2) * (index % 2 ? -1 : 1) +
-      Math.sin(time.get() / (2900 * weight) + phase) * 0.35,
-  );
+  useEffect(() => {
+    if (!ref.current || reduceMotion) return;
+    return float(ref.current, index, anchor);
+  }, [index, anchor, reduceMotion]);
 
   return (
-    <motion.div
-      style={reduceMotion ? undefined : { x, y, rotate }}
-      className={className}
-    >
+    <div ref={ref} style={{ transformOrigin: anchor === "end" ? "right center" : "left center" }}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 

@@ -183,7 +183,7 @@ export function SpatialTimeline() {
                   <ul className="space-y-8 py-2">
                     {entry.roles.map((role) => (
                       <li key={role.org}>
-                        <FloatingEntry index={floatIndex++}>
+                        <FloatingEntry index={floatIndex++} side="right">
                           <RoleBody role={role} side="right" />
                         </FloatingEntry>
                       </li>
@@ -197,7 +197,7 @@ export function SpatialTimeline() {
           return (
             <li key={entry.org} className={`relative my-20 pl-10 ${side.item}`}>
               <SpineNode className={side.node} />
-              <FloatingEntry index={floatIndex++}>
+              <FloatingEntry index={floatIndex++} side={entry.side}>
                 <RoleBody role={entry} side={entry.side} />
               </FloatingEntry>
             </li>
