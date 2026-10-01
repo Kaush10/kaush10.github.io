@@ -151,7 +151,7 @@ export function SpatialTimeline() {
     <section
       id="archive"
       aria-labelledby="archive-heading"
-      className="relative mx-auto w-full max-w-4xl px-6 py-32"
+      className="relative mx-auto w-full max-w-4xl px-10 py-32 md:px-6"
     >
       <h2
         id="archive-heading"
