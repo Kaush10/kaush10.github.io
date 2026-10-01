@@ -5,44 +5,85 @@ import { useEffect, useRef, useState } from "react";
 const SDK_URL =
   "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.3.0/dist/unicornStudio.umd.js";
 
-type Layer = {
-  hide: () => void;
-  layerType?: string;
-  fontSize?: number;
-  breakpoints?: { name: string; props: Record<string, unknown> }[];
-};
+type Layer = { hide: () => void };
 
 type Scene = {
   destroy: () => void;
   getLayer: (idOrName: string) => Layer | undefined;
-  layers?: Layer[];
 };
-
-// The scene's headline is set small for phones (its "Mobile" breakpoint). It
-// reads better about twice that size, on two lines. Font size is relative to
-// the canvas width. Set on the layer and on its Mobile breakpoint, so it holds
-// when the scene re-applies breakpoints on resize.
-const MOBILE_HEADLINE_SIZE = 0.1;
-
-function enlargeMobileHeadline(scene: Scene) {
-  for (const layer of scene.layers ?? []) {
-    if (layer.layerType !== "text") continue;
-    const mobile = layer.breakpoints?.find((b) => b.name === "Mobile");
-    if (!mobile) continue;
-    mobile.props.fontSize = MOBILE_HEADLINE_SIZE;
-    if (window.matchMedia("(max-width: 575px)").matches) layer.fontSize = MOBILE_HEADLINE_SIZE;
-  }
-}
 
 type UnicornStudioSDK = {
   addScene: (options: {
     element: HTMLElement;
-    projectId: string;
+    /** Id of a <script type="application/json"> holding the scene's data. */
+    filePath: string;
     scale?: number;
     dpi?: number;
-    production?: boolean;
   }) => Promise<Scene>;
 };
+
+type SceneLayer = {
+  layerType?: string;
+  width?: number;
+  height?: number;
+  heightMode?: number;
+  compiledFragmentShaders?: string[];
+  breakpoints?: { name: string; props: Record<string, unknown> }[];
+  states?: { scroll?: { prop: string }[] };
+};
+
+const SCENE_URL = "https://storage.googleapis.com/unicornstudio-production/embeds/";
+
+/**
+ * Phone adjustments to the scene, made to its data before it loads so they
+ * hold through every re-layout (Unicorn applies breakpoints itself on resize):
+ * - the headline, small in the scene's Mobile breakpoint, is set large on two
+ *   lines (font size is relative to the canvas width);
+ * - the frame, a rectangle with its desktop proportions locked, would shrink
+ *   to a short box on a tall phone screen. It spans the screen's height
+ *   instead, so it meets the page's frame below.
+ */
+const MOBILE = { max: 575 };
+const MOBILE_HEADLINE = { fontSize: 0.15, width: 0.62 };
+
+function adjustForPhones(data: { layers?: SceneLayer[] }) {
+  const phone = window.matchMedia(`(max-width: ${MOBILE.max}px)`).matches;
+  for (const layer of data.layers ?? []) {
+    if (layer.layerType === "text") {
+      const mobile = layer.breakpoints?.find((b) => b.name === "Mobile");
+      if (mobile) Object.assign(mobile.props, MOBILE_HEADLINE);
+      // A leftover scroll row animates the box's width, which would re-wrap the larger text.
+      if (layer.states?.scroll) layer.states.scroll = layer.states.scroll.filter((row) => row.prop !== "width");
+    }
+    // The frame's shader has its desktop proportions written in
+    // ("absHeight = absWidth / 1.7010"). On phones that line goes, so its
+    // height follows the screen; heightMode 0 is "relative" to match.
+    if (layer.layerType === "shape" && (layer.width ?? 0) > 0.5 && phone) {
+      layer.heightMode = 0;
+      layer.compiledFragmentShaders = layer.compiledFragmentShaders?.map((shader) =>
+        shader.replace(/absHeight = absWidth \/ [\d.]+;/, ""),
+      );
+    }
+  }
+  return data;
+}
+
+/** Fetches the scene, applies the phone adjustments, and puts it on the page for the SDK. */
+async function prepareScene(projectId: string) {
+  const [id, query] = projectId.split("?");
+  const response = await fetch(`${SCENE_URL}${id}${query ? `?${query}` : ""}`);
+  const data = adjustForPhones(await response.json());
+  const scriptId = `unicorn-scene-${id}`;
+  let script = document.getElementById(scriptId);
+  if (!script) {
+    script = document.createElement("script");
+    script.id = scriptId;
+    script.setAttribute("type", "application/json");
+    document.body.appendChild(script);
+  }
+  script.textContent = JSON.stringify(data);
+  return scriptId;
+}
 
 declare global {
   interface Window {
@@ -98,30 +139,17 @@ export function UnicornHero({
     // lower is stretched by the browser and reads as soft.
     const dpi = Math.min(window.devicePixelRatio || 1, 2);
 
-    loadSdk()
-      .then((sdk) =>
-        sdk.addScene({
-          element,
-          projectId,
-          scale: 1,
-          dpi,
-          // Load from Unicorn's storage, not its CDN: the CDN can serve a stale
-          // scene for a long time after a republish. A `?update=` tag on the
-          // project id keeps each version cacheable in the browser.
-          production: false,
-        }),
-      )
+    // The scene comes from Unicorn's storage, not its CDN (which can serve a
+    // stale scene for a long time after a republish); a `?update=` tag on the
+    // project id keeps each version cacheable in the browser.
+    Promise.all([loadSdk(), prepareScene(projectId)])
+      .then(([sdk, filePath]) => sdk.addScene({ element, filePath, scale: 1, dpi }))
       .then((created) => {
         if (cancelled) {
           created.destroy();
           return;
         }
         scene = created;
-        try {
-          enlargeMobileHeadline(created);
-        } catch {
-          // The SDK's internals changed; keep the scene's own size.
-        }
         for (const name of hiddenKey ? hiddenKey.split("\n") : []) {
           created.getLayer(name)?.hide();
         }
