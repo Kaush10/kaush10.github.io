@@ -84,7 +84,7 @@ export function lightAt(t: number) {
   );
   return {
     color: `rgb(${r} ${g} ${b})`,
-    glow: `0 0 ${mix(18, 6, k).toFixed(1)}px ${mix(4, 1, k).toFixed(1)}px rgb(255 255 255 / ${mix(0.45, 0.07, k).toFixed(3)})`,
+    glow: `0 0 ${mix(18, 6, k).toFixed(1)}px ${mix(4, 1, k).toFixed(1)}px rgb(255 255 255 / calc(${mix(0.45, 0.07, k).toFixed(3)} * var(--glow, 1)))`,
   };
 }
 

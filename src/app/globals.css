@@ -145,7 +145,7 @@ body {
 }
 .spot-filament {
   background: #f4f4f4;
-  box-shadow: 0 0 10px 2px rgb(255 255 255 / 0.65);
+  box-shadow: 0 0 10px 2px rgb(255 255 255 / calc(0.65 * var(--glow)));
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -173,8 +173,8 @@ body {
   transform: translate(-50%, -50%);
   background: radial-gradient(
     closest-side,
-    rgb(255 255 255 / 0.14),
-    rgb(255 255 255 / 0.04) 45%,
+    rgb(255 255 255 / calc(0.14 * var(--glow))),
+    rgb(255 255 255 / calc(0.04 * var(--glow))) 45%,
     transparent
   );
   opacity: 0;
@@ -421,8 +421,8 @@ body {
   border-radius: inherit;
   background: #ece9e3;
   box-shadow:
-    0 0 10px 2px rgb(255 255 255 / 0.5),
-    0 0 46px 8px rgb(255 255 255 / 0.1);
+    0 0 10px 2px rgb(255 255 255 / calc(0.5 * var(--glow))),
+    0 0 46px 8px rgb(255 255 255 / calc(0.1 * var(--glow)));
   opacity: 0;
 }
 .resume-drop.is-lit .resume-filament,
@@ -580,5 +580,42 @@ body {
 @media (max-width: 767px) {
   .resume-canvas {
     mask-image: linear-gradient(to bottom, transparent 0, transparent 22svh, #000 calc(22svh + 3rem));
+  }
+}
+
+/* ---- Light mode --------------------------------------------------------
+ * The whole page, the Unicorn scene included, is inverted: black paper
+ * becomes white, white light becomes ink, and hue-rotate puts colours back
+ * on their own hue. The filter eases in and out so the switch is smooth.
+ * (The root's own background paints outside the filter, so it's set too, for
+ * overscroll.) */
+/* How strong the bulbs' glows are; registered so it eases with the theme. */
+@property --glow {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+html {
+  transition:
+    filter 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    --glow 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+html[data-theme="light"] {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #ffffff;
+  /* Bulb glows read heavier as ink than as light, so they're cut by 60%. */
+  --glow: 0.4;
+}
+.theme-toggle-disc {
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+html[data-theme="light"] .theme-toggle-disc {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  html,
+  .theme-toggle-disc {
+    transition: none;
   }
 }
