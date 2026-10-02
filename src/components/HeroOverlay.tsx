@@ -23,13 +23,35 @@ export function HeroOverlay({ headline }: { headline: string }) {
 
       <h1 className="sr-only">{headline}</h1>
 
+      {/* The cue: a line draws down, grows an arrowhead, holds, then erases
+          itself from the top into the tip, and starts again. */}
       <motion.a
         href="#about"
+        aria-label="Scroll to about"
         style={{ opacity: cueOpacity }}
-        className="absolute bottom-6 flex min-h-11 min-w-11 flex-col items-center gap-2 px-3 py-2 font-mono text-[11px] tracking-widest text-white/30 uppercase transition-colors hover:text-white/60 focus-visible:outline-1 focus-visible:outline-white/40"
+        className="absolute bottom-5 grid min-h-11 min-w-11 place-items-center px-3 py-2 text-white/35 transition-colors hover:text-white/70 focus-visible:outline-1 focus-visible:outline-white/40"
       >
-        scroll
-        <span aria-hidden className="scroll-cue block h-8 w-px bg-white/40" />
+        <svg
+          aria-hidden
+          viewBox="0 0 12 42"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeLinecap="round"
+          className="scroll-arrow h-10 w-3 overflow-visible"
+        >
+          <path className="scroll-arrow-line" pathLength={1} d="M6 1V40" />
+          <path
+            className="scroll-arrow-head"
+            pathLength={1}
+            d="M6 40.5 1.5 36"
+          />
+          <path
+            className="scroll-arrow-head"
+            pathLength={1}
+            d="M6 40.5 10.5 36"
+          />
+        </svg>
       </motion.a>
     </>
   );

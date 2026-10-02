@@ -92,32 +92,37 @@ body {
   }
 }
 
-@keyframes scroll-cue {
-  0% {
-    transform: scaleY(0);
-    transform-origin: top;
-  }
-  50% {
-    transform: scaleY(1);
-    transform-origin: top;
-  }
-  50.1% {
-    transform-origin: bottom;
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
-  }
+/* Scroll cue: the line draws down (0–40%), the arrowhead's arms grow out of
+   its tip (40–55%), it holds, then the line erases from the top while the
+   arms fold back into the tip (75–95%), and it begins again. Each path has
+   pathLength 1, so a dash offset of 1 is hidden and 0 is fully drawn. */
+.scroll-arrow path {
+  stroke-dasharray: 1;
 }
-
-.scroll-cue {
-  animation: scroll-cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+.scroll-arrow-line {
+  animation: scroll-arrow-line 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.scroll-arrow-head {
+  animation: scroll-arrow-head 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes scroll-arrow-line {
+  0% { stroke-dashoffset: 1; }
+  40%, 75% { stroke-dashoffset: 0; }
+  95%, 100% { stroke-dashoffset: -1; }
+}
+@keyframes scroll-arrow-head {
+  0%, 38% { stroke-dashoffset: 1; }
+  55%, 78% { stroke-dashoffset: 0; }
+  95%, 100% { stroke-dashoffset: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-fallback,
-  .scroll-cue {
+  .scroll-arrow path {
     animation: none;
+  }
+  .scroll-arrow path {
+    stroke-dashoffset: 0;
   }
 }
 
