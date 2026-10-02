@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
@@ -33,13 +33,21 @@ function applyTheme(theme: Theme) {
     );
 }
 
-/** A small, dim switch fixed in the top-right corner. */
+/**
+ * The switch: a small pendant lamp hanging from the top edge of the screen,
+ * like the page's other lamps. Lit in dark mode, an ink dot in light mode
+ * (the page inverts). Clicking pulls its cord: it dips and springs back and
+ * the bulb flickers.
+ */
 export function ThemeToggle() {
   const theme = useSyncExternalStore(
     subscribe,
     readTheme,
     () => "dark" as Theme,
   );
+  // Counts pulls; it keys the lamp so each pull replays the animation, and
+  // nothing plays on load.
+  const [pulls, setPulls] = useState(0);
 
   // Follow the device's setting as it changes, unless a choice was saved.
   useEffect(() => {
@@ -61,6 +69,7 @@ export function ThemeToggle() {
     if (next === system) localStorage.removeItem("theme");
     else localStorage.setItem("theme", next);
     applyTheme(next);
+    setPulls((n) => n + 1);
   };
 
   return (
@@ -71,24 +80,16 @@ export function ThemeToggle() {
         theme === "light" ? "Switch to dark mode" : "Switch to light mode"
       }
       title={theme === "light" ? "Dark mode" : "Light mode"}
-      className="theme-toggle fixed top-[calc(env(safe-area-inset-top)+0.5rem)] right-2 z-[60] grid size-9 place-items-center rounded-full text-white/20 transition-colors duration-300 hover:text-white/60 focus-visible:text-white/60 focus-visible:outline-1 focus-visible:outline-white/40 md:top-3 md:right-3"
+      className="theme-lamp fixed top-0 right-3 z-[60] h-[calc(env(safe-area-inset-top)+3rem)] w-9 focus-visible:outline-none md:right-5"
     >
-      {/* A half-lit disc; it turns over when the theme flips. */}
-      <svg
-        viewBox="0 0 16 16"
+      <span
+        key={pulls}
         aria-hidden
-        className="theme-toggle-disc size-3.5"
+        className={`theme-lamp-hang ${pulls ? "is-pulled" : ""}`}
       >
-        <circle
-          cx="8"
-          cy="8"
-          r="6.25"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.25"
-        />
-        <path d="M8 1.75a6.25 6.25 0 0 1 0 12.5Z" fill="currentColor" />
-      </svg>
+        <span className="theme-lamp-cord" />
+        <span className="theme-lamp-bulb" />
+      </span>
     </button>
   );
 }

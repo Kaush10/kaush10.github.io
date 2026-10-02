@@ -601,15 +601,59 @@ html[data-theme="light"] {
   /* Bulb glows read heavier as ink than as light, so they're cut by 60%. */
   --glow: 0.4;
 }
-.theme-toggle-disc {
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+/* The theme switch: a pendant lamp hanging from the top edge. Dim until
+   hovered or focused; pulling it dips the cord and flickers the bulb. */
+.theme-lamp {
+  opacity: 0.32;
+  transition: opacity 0.3s ease;
 }
-html[data-theme="light"] .theme-toggle-disc {
-  transform: rotate(180deg);
+.theme-lamp:hover,
+.theme-lamp:focus-visible {
+  opacity: 0.85;
+}
+.theme-lamp-hang {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+.theme-lamp-cord {
+  width: 1px;
+  height: calc(env(safe-area-inset-top) + 1.1rem);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.15), rgb(255 255 255 / 0.7));
+  transform-origin: top;
+}
+.theme-lamp-bulb {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: #f2f0eb;
+  box-shadow: 0 0 8px 1px rgb(255 255 255 / calc(0.55 * var(--glow)));
+}
+.theme-lamp-hang.is-pulled .theme-lamp-cord {
+  animation: lamp-cord 0.55s cubic-bezier(0.3, 0, 0.2, 1);
+}
+.theme-lamp-hang.is-pulled .theme-lamp-bulb {
+  animation:
+    lamp-bob 0.55s cubic-bezier(0.3, 0, 0.2, 1),
+    lamp-warm 0.9s linear;
+}
+@keyframes lamp-cord {
+  35% { transform: scaleY(1.45); }
+  65% { transform: scaleY(0.92); }
+}
+@keyframes lamp-bob {
+  35% { transform: translateY(0.5rem); }
+  65% { transform: translateY(-0.1rem); }
 }
 @media (prefers-reduced-motion: reduce) {
-  html,
-  .theme-toggle-disc {
+  html {
     transition: none;
+  }
+  .theme-lamp-hang.is-pulled * {
+    animation: none;
   }
 }
