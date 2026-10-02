@@ -116,7 +116,7 @@ export default function Home() {
       </div>
 
       {/* The frame closes here, with a dim dot answering the hero's. */}
-      <footer className="relative h-[22svh]">
+      <footer className="relative h-[13svh] md:h-[22svh]">
         <FrameRule
           index="end"
           label={`© ${new Date().getFullYear()}`}

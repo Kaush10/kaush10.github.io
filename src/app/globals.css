@@ -576,12 +576,6 @@ body {
   }
 }
 
-/* Phones: the résumé canvas reaches above the lamp; hide that part. */
-@media (max-width: 767px) {
-  .resume-canvas {
-    mask-image: linear-gradient(to bottom, transparent 0, transparent 22svh, #000 calc(22svh + 3rem));
-  }
-}
 
 /* ---- Light mode --------------------------------------------------------
  * The whole page, the Unicorn scene included, is inverted: black paper

@@ -23,6 +23,13 @@ const BLUR_MAX = 10; // px, how soft the sheet is before it enters the light
 
 type Rect = { x: number; y: number; w: number; h: number };
 
+/**
+ * On phones the canvas reaches above the stage (and the lamp at its top);
+ * the sheet starts its fall just below the lamp instead of up there.
+ */
+const fitCeiling = (scene: PaperScene, canvas: HTMLCanvasElement) =>
+  scene.setCeiling(canvas.offsetTop < 0 ? -canvas.offsetTop + 14 : null);
+
 /** The canvas can sit above the stage's top (on phones); move a canvas rect into stage coordinates. */
 const inStage = (r: Rect, canvas: HTMLCanvasElement): Rect => ({
   ...r,
@@ -77,6 +84,7 @@ export function ResumeDrop({ href }: { href: string }) {
     const load = import("@/components/paper-fall").then((m) => {
       if (disposed) return null;
       scene = m.createPaperScene(canvas);
+      fitCeiling(scene, canvas);
       duration = m.DURATION;
       touchdown = m.FALL;
       setPool(widen(inStage(scene.pool(), canvas)));
@@ -128,6 +136,7 @@ export function ResumeDrop({ href }: { href: string }) {
     const resize = new ResizeObserver(() => {
       if (!scene) return;
       scene.resize();
+      fitCeiling(scene, canvas);
       setPool(widen(inStage(scene.pool(), canvas)));
       if (!raf) scene.render(started ? duration : 0);
     });
@@ -149,7 +158,7 @@ export function ResumeDrop({ href }: { href: string }) {
   return (
     <div
       ref={stageRef}
-      className={`resume-drop relative h-[34svh] min-h-[16rem] w-full md:h-[56svh] md:min-h-[24rem] ${lit ? "is-lit" : ""}`}
+      className={`resume-drop relative h-[26svh] min-h-[13rem] w-full md:h-[56svh] md:min-h-[24rem] ${lit ? "is-lit" : ""}`}
     >
       {pool && (
         <>
@@ -205,8 +214,8 @@ export function ResumeDrop({ href }: { href: string }) {
       )}
       {/* On phones the stage is short, so the ground sits close under the
           timeline, but the canvas keeps the full height (and so the sheet its
-          size): it extends up past the lamp, and fades out above it so the
-          sheet only appears once it's in the light. */}
+          size): it extends up past the lamp, and the sheet starts its fall
+          below the lamp (fitCeiling). */}
       <canvas
         ref={canvasRef}
         aria-hidden
