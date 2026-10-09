@@ -243,7 +243,7 @@ export function ResumeDrop({ href }: { href: string }) {
           rel="noreferrer"
           tabIndex={landed ? 0 : -1}
           aria-hidden={!landed}
-          aria-label="resume"
+          aria-label="resume, September 2026"
           data-open={landed || undefined}
           className={`resume-link inline-flex min-h-11 items-center font-mono text-[12px] tracking-wider text-white/70 transition-colors hover:text-white focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/60 ${
             landed ? "" : "pointer-events-none"
@@ -251,7 +251,7 @@ export function ResumeDrop({ href }: { href: string }) {
         >
           <span aria-hidden>[</span>
           <span aria-hidden className="resume-scroll">
-            <span>resume</span>
+            <span>resume 9/26</span>
           </span>
           <span aria-hidden>]</span>
         </a>

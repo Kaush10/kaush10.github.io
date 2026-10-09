@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
 // The theme lives on <html data-theme>, set before first paint by the script
-// in layout.tsx. Light mode inverts the whole page (see globals.css). With no
-// saved choice the page follows the device's setting, live.
-
-const LIGHT_QUERY = "(prefers-color-scheme: light)";
+// in layout.tsx. Light mode inverts the whole page (see globals.css). The
+// site opens dark unless the visitor has chosen light.
 
 function readTheme(): Theme {
   return document.documentElement.dataset.theme === "light" ? "light" : "dark";
@@ -49,25 +47,11 @@ export function ThemeToggle() {
   // nothing plays on load.
   const [pulls, setPulls] = useState(0);
 
-  // Follow the device's setting as it changes, unless a choice was saved.
-  useEffect(() => {
-    const query = window.matchMedia(LIGHT_QUERY);
-    const onSystemChange = () => {
-      if (!localStorage.getItem("theme"))
-        applyTheme(query.matches ? "light" : "dark");
-    };
-    query.addEventListener("change", onSystemChange);
-    return () => query.removeEventListener("change", onSystemChange);
-  }, []);
-
   const toggle = () => {
     const next: Theme = theme === "light" ? "dark" : "light";
-    const system: Theme = window.matchMedia(LIGHT_QUERY).matches
-      ? "light"
-      : "dark";
-    // Choosing the device's own theme goes back to following it.
-    if (next === system) localStorage.removeItem("theme");
-    else localStorage.setItem("theme", next);
+    // Dark is the default, so only a light choice needs remembering.
+    if (next === "light") localStorage.setItem("theme", "light");
+    else localStorage.removeItem("theme");
     applyTheme(next);
     setPulls((n) => n + 1);
   };
