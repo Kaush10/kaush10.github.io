@@ -23,13 +23,6 @@ const BLUR_MAX = 10; // px, how soft the sheet is before it enters the light
 
 type Rect = { x: number; y: number; w: number; h: number };
 
-/**
- * On phones the canvas reaches above the stage (and the lamp at its top);
- * the sheet starts its fall just below the lamp instead of up there.
- */
-const fitCeiling = (scene: PaperScene, canvas: HTMLCanvasElement) =>
-  scene.setCeiling(canvas.offsetTop < 0 ? -canvas.offsetTop + 14 : null);
-
 /** The canvas can sit above the stage's top (on phones); move a canvas rect into stage coordinates. */
 const inStage = (r: Rect, canvas: HTMLCanvasElement): Rect => ({
   ...r,
@@ -84,7 +77,6 @@ export function ResumeDrop({ href }: { href: string }) {
     const load = import("@/components/paper-fall").then((m) => {
       if (disposed) return null;
       scene = m.createPaperScene(canvas);
-      fitCeiling(scene, canvas);
       duration = m.DURATION;
       touchdown = m.FALL;
       setPool(widen(inStage(scene.pool(), canvas)));
@@ -136,7 +128,6 @@ export function ResumeDrop({ href }: { href: string }) {
     const resize = new ResizeObserver(() => {
       if (!scene) return;
       scene.resize();
-      fitCeiling(scene, canvas);
       setPool(widen(inStage(scene.pool(), canvas)));
       if (!raf) scene.render(started ? duration : 0);
     });
@@ -214,12 +205,12 @@ export function ResumeDrop({ href }: { href: string }) {
       )}
       {/* On phones the stage is short, so the ground sits close under the
           timeline, but the canvas keeps the full height (and so the sheet its
-          size): it extends up past the lamp, and the sheet starts its fall
-          below the lamp (fitCeiling). */}
+          size and its full fall): it reaches up past the lamp, and the sheet
+          falls in front of the timeline above it. */}
       <canvas
         ref={canvasRef}
         aria-hidden
-        className="resume-canvas pointer-events-none absolute inset-x-0 top-[-22svh] h-[56svh] w-full min-h-[24rem] md:top-0 md:h-full"
+        className="resume-canvas pointer-events-none absolute inset-x-0 z-10 top-[-22svh] h-[56svh] w-full min-h-[24rem] md:top-0 md:h-full"
       />
       {/* The lamp: the end of the timeline's spine (at the left on phones,
           the centre on desktop). */}

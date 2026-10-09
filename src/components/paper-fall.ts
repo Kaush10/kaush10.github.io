@@ -25,8 +25,6 @@ const SETTLE = 0.9; // s for the sheet to lie flat after touchdown
 export const DURATION = FALL + SETTLE;
 
 const START_HEIGHT = 2.7;
-// Lowered on phones so the sheet starts below the lamp (see setCeiling).
-let startHeight = START_HEIGHT;
 const SWINGS = 2.25; // full side-to-side cycles during the fall
 const SWAY = 0.62; // lateral reach of a swing
 const ROLL = 0.62; // rad, tilt at the end of a swing
@@ -62,7 +60,7 @@ const heightAt = (s: number) => {
   const x = Math.min(1, Math.max(0, s)) * (heightTable.length - 1);
   const i = Math.floor(x);
   const f = x - i;
-  return startHeight * (1 - (heightTable[i] * (1 - f) + (heightTable[Math.min(i + 1, heightTable.length - 1)] ?? 1) * f));
+  return START_HEIGHT * (1 - (heightTable[i] * (1 - f) + (heightTable[Math.min(i + 1, heightTable.length - 1)] ?? 1) * f));
 };
 
 type Pose = {
@@ -216,11 +214,6 @@ export type PaperScene = {
   /** The spotlight's pool on the ground, in canvas pixels. */
   pool: () => { x: number; y: number; w: number; h: number };
   resize: () => void;
-  /**
-   * Start the fall low enough that the whole sheet stays below this line,
-   * in canvas pixels from the top (null: the normal start height).
-   */
-  setCeiling: (px: number | null) => void;
   dispose: () => void;
 };
 
@@ -347,22 +340,7 @@ export function createPaperScene(canvas: HTMLCanvasElement): PaperScene {
     return { x: x0, y: y0, w: Math.max(...xs) - x0, h: Math.max(...ys) - y0 };
   };
 
-  // The world height on the drop's vertical plane that projects to canvas pixel y.
-  const heightAtPixel = (py: number) => {
-    camera.updateMatrixWorld();
-    const ray = new THREE.Raycaster();
-    ray.setFromCamera(new THREE.Vector2(0, 1 - (2 * py) / canvas.clientHeight), camera);
-    const hit = new THREE.Vector3();
-    return ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit) ? hit.y : START_HEIGHT;
-  };
-  // How far the tipped, swinging sheet reaches above its centre.
-  const REACH = 0.7;
-  const setCeiling = (px: number | null) => {
-    startHeight = px === null ? START_HEIGHT : Math.min(START_HEIGHT, Math.max(0.8, heightAtPixel(px) - REACH));
-  };
-
   return {
-    setCeiling,
     render,
     pool,
     resize,
