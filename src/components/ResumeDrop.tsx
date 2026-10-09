@@ -239,8 +239,7 @@ export function ResumeDrop({ href }: { href: string }) {
             fades in from a blur. */}
         <a
           href={href}
-          target="_blank"
-          rel="noreferrer"
+          download="Kaushal_Rajesh_Resume.pdf"
           tabIndex={landed ? 0 : -1}
           aria-hidden={!landed}
           aria-label="resume, September 2026"

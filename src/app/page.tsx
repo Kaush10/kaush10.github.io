@@ -21,11 +21,11 @@ const HERO_SCENE_VERSION = "20261009-0022";
 
 const STEAM_URL = "https://steamcommunity.com/id/kaushreverse/";
 
-// TODO(kaush): confirm which email goes on the public site, your X handle,
-// and where the résumé lives.
+// TODO(kaush): confirm which email goes on the public site, and your X handle.
 const EMAIL = "";
 const X_URL = "";
-const RESUME_URL = "#";
+// The résumé PDF in public/, downloaded by the [resume] link.
+const RESUME_URL = "/Kaushal_Rajesh_Resume.pdf";
 
 const links = [
   { label: "email", href: EMAIL ? `mailto:${EMAIL}` : "" },
