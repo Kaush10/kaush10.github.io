@@ -14,10 +14,10 @@ import { UnicornHero } from "@/components/UnicornHero";
 
 const HEADLINE = "hey, its kaush";
 
-// The hero's Unicorn Studio scene. After republishing it, bump the version
-// (any new value, e.g. the publish time) so browsers fetch the new one.
-const HERO_SCENE = "P9NQwwDyqpdo8M1mJg53";
-const HERO_SCENE_VERSION = "20261001-0409";
+// The hero's Unicorn Studio scene, served from the site's own copy (saved by
+// `npm run scene:pull`), so a later publish on Unicorn's side can't change
+// it. After pulling a new version, bump this so browsers fetch it.
+const HERO_SCENE_VERSION = "20261009-0022";
 
 const STEAM_URL = "https://steamcommunity.com/id/kaushreverse/";
 
@@ -40,7 +40,7 @@ export default function Home() {
       <FrameRails />
 
       <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-black select-none">
-        <UnicornHero projectId={`${HERO_SCENE}?update=${HERO_SCENE_VERSION}`} />
+        <UnicornHero src={`/hero-scene.json?v=${HERO_SCENE_VERSION}`} />
 
         <div
           aria-hidden

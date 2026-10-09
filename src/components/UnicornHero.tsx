@@ -32,8 +32,6 @@ type SceneLayer = {
   states?: { scroll?: { prop: string }[] };
 };
 
-const SCENE_URL = "https://storage.googleapis.com/unicornstudio-production/embeds/";
-
 /**
  * Phone adjustments to the scene, made to its data before it loads so they
  * hold through every re-layout (Unicorn applies breakpoints itself on resize):
@@ -53,27 +51,29 @@ function adjustForPhones(data: { layers?: SceneLayer[] }) {
       const mobile = layer.breakpoints?.find((b) => b.name === "Mobile");
       if (mobile) Object.assign(mobile.props, MOBILE_HEADLINE);
       // A leftover scroll row animates the box's width, which would re-wrap the larger text.
-      if (layer.states?.scroll) layer.states.scroll = layer.states.scroll.filter((row) => row.prop !== "width");
+      if (layer.states?.scroll)
+        layer.states.scroll = layer.states.scroll.filter(
+          (row) => row.prop !== "width",
+        );
     }
     // The frame's shader has its desktop proportions written in
     // ("absHeight = absWidth / 1.7010"). On phones that line goes, so its
     // height follows the screen; heightMode 0 is "relative" to match.
     if (layer.layerType === "shape" && (layer.width ?? 0) > 0.5 && phone) {
       layer.heightMode = 0;
-      layer.compiledFragmentShaders = layer.compiledFragmentShaders?.map((shader) =>
-        shader.replace(/absHeight = absWidth \/ [\d.]+;/, ""),
+      layer.compiledFragmentShaders = layer.compiledFragmentShaders?.map(
+        (shader) => shader.replace(/absHeight = absWidth \/ [\d.]+;/, ""),
       );
     }
   }
   return data;
 }
 
-/** Fetches the scene, applies the phone adjustments, and puts it on the page for the SDK. */
-async function prepareScene(projectId: string) {
-  const [id, query] = projectId.split("?");
-  const response = await fetch(`${SCENE_URL}${id}${query ? `?${query}` : ""}`);
+/** Loads the scene, applies the phone adjustments, and puts it on the page for the SDK. */
+async function prepareScene(src: string) {
+  const response = await fetch(src);
   const data = adjustForPhones(await response.json());
-  const scriptId = `unicorn-scene-${id}`;
+  const scriptId = "unicorn-scene";
   let script = document.getElementById(scriptId);
   if (!script) {
     script = document.createElement("script");
@@ -117,10 +117,11 @@ function loadSdk() {
  * until the first frame is ready, and stays if WebGL or the CDN fails.
  */
 export function UnicornHero({
-  projectId,
+  src,
   hiddenLayers = [],
 }: {
-  projectId: string;
+  /** URL of the scene's published JSON (saved into public/ by `npm run scene:pull`). */
+  src: string;
   /** Scene layers to hide, by public name (see scene.getLayers()), e.g. text the page renders as HTML. */
   hiddenLayers?: string[];
 }) {
@@ -139,11 +140,10 @@ export function UnicornHero({
     // lower is stretched by the browser and reads as soft.
     const dpi = Math.min(window.devicePixelRatio || 1, 2);
 
-    // The scene comes from Unicorn's storage, not its CDN (which can serve a
-    // stale scene for a long time after a republish); a `?update=` tag on the
-    // project id keeps each version cacheable in the browser.
-    Promise.all([loadSdk(), prepareScene(projectId)])
-      .then(([sdk, filePath]) => sdk.addScene({ element, filePath, scale: 1, dpi }))
+    Promise.all([loadSdk(), prepareScene(src)])
+      .then(([sdk, filePath]) =>
+        sdk.addScene({ element, filePath, scale: 1, dpi }),
+      )
       .then((created) => {
         if (cancelled) {
           created.destroy();
@@ -162,7 +162,7 @@ export function UnicornHero({
       scene?.destroy();
       setReady(false);
     };
-  }, [projectId, hiddenKey]);
+  }, [src, hiddenKey]);
 
   return (
     <div aria-hidden className="absolute inset-0">
