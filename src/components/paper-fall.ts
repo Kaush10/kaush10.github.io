@@ -23,6 +23,9 @@ const SEG_Y = 36;
 export const FALL = 3.3; // s from release to touchdown
 const SETTLE = 0.9; // s for the sheet to lie flat after touchdown
 export const DURATION = FALL + SETTLE;
+// Playback skips the top of the fall and picks it up partway down, already
+// swinging. The fade and blur-in start from here.
+export const START = 1.0; // s
 
 const START_HEIGHT = 2.7;
 const SWINGS = 2.25; // full side-to-side cycles during the fall
@@ -82,9 +85,11 @@ type Pose = {
 export function poseAt(t: number): Pose {
   const s = t / FALL;
   const yaw = -0.42 + 0.58 * smooth(0, 1.15, s);
-  // It comes out of the dark slowly: fading and sharpening over half the fall.
-  const opacity = smooth(0.02, 0.5, s);
-  const blur = 1 - smooth(0.03, 0.55, s);
+  // It comes out of the dark slowly: fading and sharpening over half the
+  // fall, counted from where playback starts.
+  const shown = (t - START) / FALL;
+  const opacity = smooth(0.02, 0.5, shown);
+  const blur = 1 - smooth(0.03, 0.55, shown);
 
   if (s <= 1) {
     const phase = 2 * Math.PI * SWINGS * s;

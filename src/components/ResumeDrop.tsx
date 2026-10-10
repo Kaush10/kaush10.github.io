@@ -68,6 +68,7 @@ export function ResumeDrop({ href }: { href: string }) {
     ).matches;
 
     let scene: PaperScene | null = null;
+    let start = 0;
     let duration = 0;
     let touchdown = 0;
     let raf = 0;
@@ -77,10 +78,11 @@ export function ResumeDrop({ href }: { href: string }) {
     const load = import("@/components/paper-fall").then((m) => {
       if (disposed) return null;
       scene = m.createPaperScene(canvas);
+      start = m.START;
       duration = m.DURATION;
       touchdown = m.FALL;
       setPool(widen(inStage(scene.pool(), canvas)));
-      scene.render(0);
+      scene.render(start);
       return scene;
     });
 
@@ -98,7 +100,7 @@ export function ResumeDrop({ href }: { href: string }) {
       }
       const t0 = performance.now() + LIGHT_LEAD * 1000;
       const tick = (now: number) => {
-        const t = Math.max(0, (now - t0) / 1000);
+        const t = start + Math.max(0, (now - t0) / 1000);
         const pose = s.render(Math.min(t, duration));
         canvas.style.filter =
           pose.blur > 0.01
@@ -129,7 +131,7 @@ export function ResumeDrop({ href }: { href: string }) {
       if (!scene) return;
       scene.resize();
       setPool(widen(inStage(scene.pool(), canvas)));
-      if (!raf) scene.render(started ? duration : 0);
+      if (!raf) scene.render(started ? duration : start);
     });
     resize.observe(stage);
 
