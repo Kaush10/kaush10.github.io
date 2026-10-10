@@ -29,27 +29,27 @@ export function HeroOverlay({ headline }: { headline: string }) {
         href="#about"
         aria-label="Scroll to about"
         style={{ opacity: cueOpacity }}
-        className="absolute bottom-5 grid min-h-11 min-w-11 place-items-center px-3 py-2 text-white/35 transition-colors hover:text-white/70 focus-visible:outline-1 focus-visible:outline-white/40"
+        className="absolute bottom-5 grid min-h-11 min-w-11 place-items-center px-3 py-2 text-white/20 transition-colors hover:text-white/50 focus-visible:outline-1 focus-visible:outline-white/40"
       >
         <svg
           aria-hidden
-          viewBox="0 0 12 42"
+          viewBox="0 0 12 18"
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
           strokeLinecap="round"
-          className="scroll-arrow h-10 w-3 overflow-visible"
+          className="scroll-arrow h-[18px] w-3 overflow-visible"
         >
-          <path className="scroll-arrow-line" pathLength={1} d="M6 1V40" />
+          <path className="scroll-arrow-line" pathLength={1} d="M6 1V16" />
           <path
             className="scroll-arrow-head"
             pathLength={1}
-            d="M6 40.5 1.5 36"
+            d="M6 16.5 3.5 14"
           />
           <path
             className="scroll-arrow-head"
             pathLength={1}
-            d="M6 40.5 10.5 36"
+            d="M6 16.5 8.5 14"
           />
         </svg>
       </motion.a>
