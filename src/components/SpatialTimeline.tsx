@@ -22,6 +22,9 @@ type Role = {
   /** The organisation's mark, shown beside the entry on the spine's side. */
   glyph?: ReactNode;
   period: string;
+  /** A role held before this one at the same organisation, shown as the
+   *  first step of the period line. */
+  earlier?: { title: string; period: string };
   title: string;
   org: string;
   summary: string;
@@ -77,6 +80,7 @@ const entries: Entry[] = [
     kind: "role",
     side: "left",
     period: "2024 — 2025",
+    earlier: { title: "VP", period: "2023" },
     title: "Student Chapter President",
     glyph: <HfesGlyph />,
     org: "Human Factors & Ergonomics Society (HFES)",
@@ -171,8 +175,29 @@ function TitleMark({
 function RoleBody({ role, side }: { role: Role; side: Side }) {
   return (
     <div className="group">
-      <p className="font-mono text-xs tracking-wider text-muted uppercase">
-        {role.period}
+      <p
+        className={`flex items-center gap-2.5 font-mono text-xs tracking-wider text-muted uppercase ${side === "left" ? "md:justify-end" : ""}`}
+      >
+        {role.earlier && (
+          <>
+            {/* The step before: a smaller, dimmer stop on a short rule,
+                like a node further up the spine. */}
+            <span className="text-faint">
+              <span className="mr-1.5 text-[10px] tracking-widest">
+                {role.earlier.title}
+              </span>
+              {role.earlier.period}
+            </span>
+            <span
+              aria-hidden
+              className="relative h-px w-6 bg-linear-to-r from-faint to-muted"
+            >
+              <span className="absolute top-1/2 right-0 size-1 translate-x-1/2 -translate-y-1/2 rounded-full bg-muted" />
+            </span>
+            <span className="sr-only">then</span>
+          </>
+        )}
+        <span>{role.period}</span>
       </p>
       <h3 className="mt-2 text-base leading-snug font-medium text-foreground">
         {/* On the spine's side of the first line: leading the title, or for
